@@ -224,6 +224,7 @@ class HarCapturer {
       .filter(r => this.timings[r.request.url].initiated_at <= first_load_time_ms + pageLoadTimeMs)
       .map (r => {
         r.critical = false;
+        r.viewport_occupied = 0.0;
         if (this.options.extractCriticalRequests == false) {
           return r;
         }
