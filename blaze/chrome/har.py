@@ -47,6 +47,7 @@ class HarEntry(NamedTuple):
     request: Request
     response: Response
     critical: bool
+    viewport_occupied: float
 
 
 class HarLog(NamedTuple):

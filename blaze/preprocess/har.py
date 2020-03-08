@@ -48,6 +48,7 @@ def compute_parent_child_relationships(res_list: List[Resource], timings: Dict[s
                 fetch_delay_ms=timing.fetch_delay_ms if timing else 0,
                 time_to_first_byte_ms=timing.time_to_first_byte_ms if timing else 0,
                 critical=res.critical,
+                viewport_occupied=res.viewport_occupied if res.viewport_occupied else 0,
             )
         )
 
@@ -77,6 +78,7 @@ def har_entries_to_resources(har: Har) -> List[Resource]:
                 order=order,
                 source_id=order,
                 critical=entry.critical,
+                viewport_occupied=entry.viewport_occupied if entry.viewport_occupied else 0,
             )
         )
 

@@ -35,6 +35,7 @@ class Resource(NamedTuple):
 
     cache_time: int = 0
     critical: bool = False
+    viewport_occupied: float = 0
 
     def __eq__(self, other):
         return self.url == other.url

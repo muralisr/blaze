@@ -38,6 +38,7 @@ def resource_list_to_push_groups(res_list: List[Resource], train_domain_globs=No
             fetch_delay_ms=res.fetch_delay_ms,
             time_to_first_byte_ms=res.time_to_first_byte_ms,
             critical=res.critical,
+            viewport_occupied=res.viewport_occupied,
         )
         push_groups[new_res.group_id].resources.append(new_res)
 
