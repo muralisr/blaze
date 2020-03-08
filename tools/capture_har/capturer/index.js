@@ -230,6 +230,7 @@ class HarCapturer {
         else {
           if (this.critical_request_urls.includes(r.request.url)) {
             r.critical = true;
+            r.viewport_occupied = 0.1;
           }
           return r;
         }
