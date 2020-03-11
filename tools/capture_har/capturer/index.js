@@ -102,6 +102,7 @@ class HarCapturer {
     this.resources[requestId] = {
       started_date_time: (new Date()).toISOString(),
       critical: false,
+      viewport_occupied: 0.0,
       request: {
         url: request.url,
         method: request.method,
