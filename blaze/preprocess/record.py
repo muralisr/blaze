@@ -23,8 +23,8 @@ from blaze.util.seq import ordered_uniq
 from .har import har_entries_to_resources, compute_parent_child_relationships
 from .url import Url
 
-EXECUTION_CAPTURE_RUNS = 5
-STABLE_SET_NUM_RUNS = 10
+EXECUTION_CAPTURE_RUNS = 1
+STABLE_SET_NUM_RUNS = 1
 
 
 def record_webpage(url: str, save_dir: str, config: Config):
