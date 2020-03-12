@@ -44,6 +44,19 @@ class Simulator:
         self.client_env: Optional[ClientEnvironment] = None
         self.policy: Optional[Policy] = None
 
+        # Speed Index variables
+        # time and added_viewport go in lock-step. 
+        # when a new image is drawn on screen, it's contribution to
+        # the viewport is pushed into added_viewport and the time
+        # this happened is stored in index_time. 
+        # total_viewport represents the target/total viewport that
+        # will be occupied when all images are consider loaded. 
+        # i.e. summing up all the values in added_viewport 
+        # should give us the total_viewport value
+        self.speed_index_time = []
+        self.speed_index_added_viewport = []
+        self.speed_index_total_viewport = 1
+
     def reset_simulation(
         self, client_env: ClientEnvironment, policy: Optional[Policy] = None, cached_urls: Optional[Set[str]] = None
     ):
@@ -139,16 +152,19 @@ class Simulator:
 
         return dry_run_list if dry_run else None
 
-    def step_request_queue(self):
+    def step_request_queue(self, get_speed_index: Optional[bool] = False):
         """
         Steps through the request queue once and updates the simulator state based on the results
         """
 
         completed_this_step, time_ms_this_step = self.request_queue.step()
         self.total_time_ms += time_ms_this_step
-
+        
         for node in completed_this_step:
             self.completed_nodes[node] = self.total_time_ms + node.resource.execution_ms
+            if get_speed_index and node.resource.viewport_occupied > 0.0: # we are tracking speed index and the currently completed node contributes a non-zero amount to the viewport which means it affects ths speed index
+                self.speed_index_time.append(self.total_time_ms)
+                self.speed_index_added_viewport.append(node.resource.viewport_occupied)
             self.log.debug("resource completed with viewport occupied as ", resource=node.resource.url, viewport_occupied=node.resource.viewport_occupied)
             self.log.verbose("resource completed", resource=node.resource.url, time=self.completed_nodes[node])
 
@@ -271,6 +287,47 @@ class Simulator:
 
         return dry_run_list if dry_run else None
 
+    def simulate_speed_index(self,
+        client_env: ClientEnvironment,
+        policy: Optional[Policy] = None,
+        cached_urls: Optional[Set[str]] = None,
+    ) -> float:
+        """
+        Simulates the speed index of a webpage in the given client environment
+        with an optional push policy to also simulate.
+
+        :param client_env: The client environment to simulate
+        :param policy: The push/preload policy to simulate
+        :param cached_urls: Optional set of URLs to be considered in cache. 
+        :return: The predicted speed index as a floating point value
+        """
+        self.log.verbose("simulating speed index with client environment", **client_env._asdict())
+        self.reset_simulation(client_env, policy=policy, cached_urls=cached_urls)
+
+        if policy:
+            # First simulate it without the policy to comparing timing information
+            self.no_push = Simulator(self.env_config)
+            self.no_push.log.set_silence(True)
+            self.no_push.simulate_load_time(client_env)
+
+            self.log.verbose("simulating speed index with policy:")
+            self.log.verbose(json.dumps(policy.as_dict, indent=4))
+
+        # start the initial item
+        self.pq.put((self.root.priority, self.root))
+        self.request_queue.add_with_delay(self.root, self.root.resource.time_to_first_byte_ms)
+
+        # schedule push resources for the root
+        self.schedule_pushed_and_preloaded_resources(self.root, self.root.resource.time_to_first_byte_ms)
+
+        # process all subsequent requests
+        while not self.pq.empty():
+            _, curr_node = self.pq.get()
+            while curr_node not in self.completed_nodes:
+                self.step_request_queue(get_speed_index=True)
+            self.schedule_child_requests(curr_node)
+        return self.compute_speed_index()
+
     def simulate_load_time(
         self,
         client_env: ClientEnvironment,
@@ -288,6 +345,10 @@ class Simulator:
         """
         self.log.verbose("simulating page load with client environment", **client_env._asdict())
         self.reset_simulation(client_env, policy=policy, cached_urls=cached_urls)
+
+        if use_aft and get_speed_index:
+            self.log.warn("Both above fold time and speed index were requested but only one of these can be computed at a time. Computing above the fold time instead of speed index.")
+            get_speed_index = False
 
         if policy:
             # First simulate it without the policy to comparing timing information
@@ -309,14 +370,16 @@ class Simulator:
         while not self.pq.empty():
             _, curr_node = self.pq.get()
             while curr_node not in self.completed_nodes:
-                self.step_request_queue()
+                self.step_request_queue(get_speed_index)
             self.schedule_child_requests(curr_node)
 
         if use_aft:
             critical_nodes = [node for node in self.node_map.values() if node.resource.critical]
             if critical_nodes:
                 return max(self.completed_nodes[node] for node in critical_nodes)
-            self.log.warn("requested speed index, but no nodes marked `critical` found")
+            self.log.warn("requested above the fold time, but no nodes marked `critical` found")
+        if get_speed_index:
+            return self.compute_speed_index()
         return self.completion_time()
 
     def completion_time(self, url: Optional[str] = None) -> float:
@@ -382,3 +445,35 @@ class Simulator:
                 recursive_print(next_node, depth + 1)
 
         recursive_print(self.root)
+
+    def compute_speed_index(self):
+        """
+        Computes the speed index by calculating the area under the curve of viewport added versus time.
+        """
+
+        # X-axis values are given by self.speed_index_time. For each X value.
+        # the corresponding Y value is NOT given by the element at the same index
+        # of speed_index_added_viewport.
+        # speed_index_added_viewport gives the incremental contribution
+        # of each element to the viewport. we need to create a new list
+        # that contains the currently shown viewport at each instance of time
+        # and this list represents the Y value.
+
+        total_viewport_drawn = []
+        current_viewport_drawn = 0
+        for element in self.speed_index_added_viewport:
+            current_viewport_drawn += element
+            total_viewport_drawn.append(current_viewport_drawn)
+
+        # we apply reimann trapezoidal sum
+        # but note that our trapezoid has parallel heights
+        # so our formula is time_delta * (y_0+y_1)/2
+
+        total_area_under_curve = 0
+        for index in range(len(total_viewport_drawn)) - 1:
+            y_0 = total_viewport_drawn[index]
+            y_1 = total_viewport_drawn[index + 1]
+            x_0 = self.speed_index_time[index]
+            x_1 = self.speed_index_time[index + 1]
+            total_area_under_curve += 0.5 * (x_1 - x_0) * (y_0 + y_1)
+        return total_area_under_curve
