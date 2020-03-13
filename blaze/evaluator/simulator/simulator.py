@@ -45,13 +45,13 @@ class Simulator:
         self.policy: Optional[Policy] = None
 
         # Speed Index variables
-        # time and added_viewport go in lock-step. 
+        # time and added_viewport go in lock-step.
         # when a new image is drawn on screen, it's contribution to
         # the viewport is pushed into added_viewport and the time
-        # this happened is stored in index_time. 
+        # this happened is stored in index_time.
         # total_viewport represents the target/total viewport that
-        # will be occupied when all images are consider loaded. 
-        # i.e. summing up all the values in added_viewport 
+        # will be occupied when all images are consider loaded.
+        # i.e. summing up all the values in added_viewport
         # should give us the total_viewport value
         self.speed_index_time = []
         self.speed_index_added_viewport = []
@@ -159,7 +159,7 @@ class Simulator:
 
         completed_this_step, time_ms_this_step = self.request_queue.step()
         self.total_time_ms += time_ms_this_step
-        
+
         for node in completed_this_step:
             self.completed_nodes[node] = self.total_time_ms + node.resource.execution_ms
             if get_speed_index and node.resource.viewport_occupied > 0.0: # we are tracking speed index and the currently completed node contributes a non-zero amount to the viewport which means it affects ths speed index
@@ -308,7 +308,7 @@ class Simulator:
             # First simulate it without the policy to comparing timing information
             self.no_push = Simulator(self.env_config)
             self.no_push.log.set_silence(True)
-            self.no_push.simulate_load_time(client_env)
+            self.no_push.simulate_speed_index(client_env)
 
             self.log.verbose("simulating speed index with policy:")
             self.log.verbose(json.dumps(policy.as_dict, indent=4))
