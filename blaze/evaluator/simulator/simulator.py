@@ -469,7 +469,7 @@ class Simulator:
         # but note that our trapezoid has parallel heights
         # so our formula is time_delta * (y_0+y_1)/2
         total_area_under_curve = 0
-        for index in range(len(total_viewport_drawn)) - 1:
+        for index in range(len(total_viewport_drawn) - 1) :
             y_0 = total_viewport_drawn[index]
             y_1 = total_viewport_drawn[index + 1]
             x_0 = self.speed_index_time[index]
