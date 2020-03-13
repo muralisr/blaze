@@ -450,7 +450,7 @@ class Simulator:
         """
         Computes the speed index by calculating the area under the curve of viewport added versus time.
         """
-
+        self.log.warn("in compute speed_index")
         # X-axis values are given by self.speed_index_time. For each X value.
         # the corresponding Y value is NOT given by the element at the same index
         # of speed_index_added_viewport.
@@ -468,7 +468,6 @@ class Simulator:
         # we apply reimann trapezoidal sum
         # but note that our trapezoid has parallel heights
         # so our formula is time_delta * (y_0+y_1)/2
-
         total_area_under_curve = 0
         for index in range(len(total_viewport_drawn)) - 1:
             y_0 = total_viewport_drawn[index]
@@ -476,4 +475,5 @@ class Simulator:
             x_0 = self.speed_index_time[index]
             x_1 = self.speed_index_time[index + 1]
             total_area_under_curve += 0.5 * (x_1 - x_0) * (y_0 + y_1)
+        self.log.warn("computed speed index returned as ", total_area_under_curve=total_area_under_curve)
         return total_area_under_curve

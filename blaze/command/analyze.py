@@ -114,9 +114,12 @@ def page_load_time(args):
 
     log.debug("running simulator...")
     sim = Simulator(env_config)
-    orig_sim_plt = sim.simulate_load_time(client_env)
-    sim_plt = sim.simulate_load_time(client_env, policy)
-
+    if not args.speed_index:
+        orig_sim_plt = sim.simulate_load_time(client_env)
+        sim_plt = sim.simulate_load_time(client_env, policy)
+    else:
+        orig_sim_plt = sim.simulate_speed_index(client_env)
+        sim_plt = sim.simulate_speed_index(client_env, policy)
     print(
         json.dumps(
             {
