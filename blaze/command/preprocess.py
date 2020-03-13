@@ -97,15 +97,15 @@ def annotate_critical_requests(website, config, client_env, push_groups: List[Pu
     har = capture_har_in_replay_server(website, config, client_env, extract_critical_requests=True)
     critical_requests = set(h.request.url for h in har.log.entries if h.critical)
     log.debug("critical requests before annotating", resources=critical_requests)
-    viewport_occipied = {}
+    viewport_occupied = {}
     for har_entry in har.log.entries:
         if har_entry.critical:
-            viewport_occipied[har_entry.request.url] = har_entry.viewport_occupied
+            viewport_occupied[har_entry.request.url] = har_entry.viewport_occupied
 
     for group in push_groups:
         for i, res in enumerate(group.resources):
             if res.url in critical_requests:
-                group.resources[i] = res._replace(critical=True, viewport_occipied=viewport_occipied[res.url])
+                group.resources[i] = res._replace(critical=True, viewport_occupied=viewport_occupied[res.url])
 
     return push_groups
 
