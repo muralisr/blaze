@@ -475,5 +475,14 @@ class Simulator:
             x_0 = self.speed_index_time[index]
             x_1 = self.speed_index_time[index + 1]
             total_area_under_curve += 0.5 * (x_1 - x_0) * (y_0 + y_1)
-        self.log.warn("computed speed index returned as ", total_area_under_curve=total_area_under_curve)
-        return total_area_under_curve
+        self.log.warn("computed area under the curve ", total_area_under_curve=total_area_under_curve)
+
+        # we have area under the curve
+        # but we actually need the area above the curve.
+        # so let us compute the area of the graph and subtract
+        # the area under the curve from it. 
+
+        total_area_above_curve = (max(self.speed_index_time) * max (total_viewport_drawn)) - total_area_under_curve
+        self.log.warn("computed area above the curve ", total_area_under_curve=total_area_under_curve)
+
+        return total_area_above_curve
