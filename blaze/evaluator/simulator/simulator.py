@@ -346,9 +346,6 @@ class Simulator:
         self.log.verbose("simulating page load with client environment", **client_env._asdict())
         self.reset_simulation(client_env, policy=policy, cached_urls=cached_urls)
 
-        if use_aft and get_speed_index:
-            self.log.warn("Both above fold time and speed index were requested but only one of these can be computed at a time. Computing above the fold time instead of speed index.")
-            get_speed_index = False
 
         if policy:
             # First simulate it without the policy to comparing timing information
@@ -370,7 +367,7 @@ class Simulator:
         while not self.pq.empty():
             _, curr_node = self.pq.get()
             while curr_node not in self.completed_nodes:
-                self.step_request_queue(get_speed_index)
+                self.step_request_queue()
             self.schedule_child_requests(curr_node)
 
         if use_aft:
@@ -380,7 +377,8 @@ class Simulator:
             self.log.warn("requested above the fold time, but no nodes marked `critical` found")
         if get_speed_index:
             return self.compute_speed_index()
-        return self.completion_time()
+        else:
+            return self.completion_time()
 
     def completion_time(self, url: Optional[str] = None) -> float:
         """
