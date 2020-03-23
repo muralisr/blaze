@@ -375,10 +375,7 @@ class Simulator:
             if critical_nodes:
                 return max(self.completed_nodes[node] for node in critical_nodes)
             self.log.warn("requested above the fold time, but no nodes marked `critical` found")
-        if get_speed_index:
-            return self.compute_speed_index()
-        else:
-            return self.completion_time()
+        return self.completion_time()
 
     def completion_time(self, url: Optional[str] = None) -> float:
         """
