@@ -33,6 +33,7 @@ class HarCapturer {
   }
 
   async captureHar() {
+    console.log("inside capture har")
     let client;
     try {
       client = await chromeRemoteDebugger({
@@ -313,6 +314,7 @@ module.exports = async (url, slowdown, outputFile, extractCriticalRequests, user
     }
   } else {
     // user did not pass in user-data-dir. just do once and return output. 
+    console.log("going to capture har")
     const res = await captureHar(url, slowdown, extractCriticalRequests, userDataDir);
     const json = JSON.stringify(res);
     if (outputFile) {
