@@ -33,7 +33,6 @@ def prepend_javascript_snippet(input_string: str):
         return str(soup)
     dir_name = "/opt/blaze/blaze/mahimahi/server/injected-javascript"
     for file_name in ["find-in-viewport.js", "interceptor.js"]:
-        log.with_namespace("murali").warn("prepending interceptor javascript")
         curr_file = os.path.join(dir_name, file_name)
         with open(curr_file) as f:
             file_contents = f.read()
@@ -60,9 +59,7 @@ def inject_extract_critical_requests_javascript(file):
         out = BytesIO()
         with gzip.GzipFile(fileobj=out, mode="wb") as f:
             f.write(uncompressed_body.encode())
-        log.with_namespace("murali").warn("it was compressed. prepending and returning.")
         return out.getvalue()
-    log.with_namespace("murali").warn("it was not compressed. NOT prepending and returning.")
     return prepend_javascript_snippet(file.body)
 
 
@@ -107,6 +104,7 @@ def start_server(
         log.debug("storing temporary files in", file_dir=file_dir)
 
         for host, files in filestore.files_by_host.items():
+            log.debug("creating host ", host=host)
             log.info("creating host", host=host, address=host_ip_map[host])
             uris_served = set()
 
