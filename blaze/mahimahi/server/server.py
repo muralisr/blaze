@@ -102,6 +102,7 @@ def start_server(
 
     # Save files and create nginx configuration
     config = Config()
+    log.debug("murali in log debug")
     with tempfile.TemporaryDirectory() as file_dir:
         log.debug("storing temporary files in", file_dir=file_dir)
 
@@ -115,11 +116,13 @@ def start_server(
             )
 
             for file in files:
+                log.debug("checking if i should append to file")
                 # Handles the case where we may have duplicate URIs for a single host
                 # or where URIs in nginx cannot be too long
                 if file.uri in uris_served or len(file.uri) > 3600 or len(file.headers.get("location", "")) > 3600:
+                    log.debug("skipping uri serve ", file_name=file)
                     continue
-
+                log.debug("going to work on file ", file_name=file)
                 uris_served.add(file.uri)
                 log.debug(
                     "serve",
