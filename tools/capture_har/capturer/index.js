@@ -39,7 +39,9 @@ class HarCapturer {
         host: this.host,
         port: this.port
       });
-
+      console.log("client is ready with chrome debugger")
+      console.log(this.host)
+      console.log(this.port)
       if (this.options.slowdown && this.options.slowdown > 1) {
         if (client.Emulation.canEmulate()) {
           await client.Emulation.setCPUThrottlingRate({
@@ -99,6 +101,8 @@ class HarCapturer {
         });
       });
     } catch (err) {
+      console.log("error happened")
+      console.log(err)
       if (client) {
         client.close();
       }
@@ -272,7 +276,7 @@ const captureHar = async (url, slowdown, extractCriticalRequests, userDataDir) =
     await asyncWait(2000);
     console.log("chrome launched with pid")
     console.log(chrome.pid)
-    
+    console.log(chrome.process)
     const capturer = new HarCapturer({
       host: "localhost",
       port: chrome.port,
