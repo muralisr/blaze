@@ -33,6 +33,7 @@ def prepend_javascript_snippet(input_string: str):
         return str(soup)
     dir_name = "/opt/blaze/blaze/mahimahi/server/injected-javascript"
     for file_name in ["find-in-viewport.js", "interceptor.js"]:
+        print("prepending interceptor javascript")
         curr_file = os.path.join(dir_name, file_name)
         with open(curr_file) as f:
             file_contents = f.read()
@@ -59,7 +60,9 @@ def inject_extract_critical_requests_javascript(file):
         out = BytesIO()
         with gzip.GzipFile(fileobj=out, mode="wb") as f:
             f.write(uncompressed_body.encode())
+        print("it was compressed. prepending and returning.")
         return out.getvalue()
+    print("it was not compressed. NOT prepending and returning.")
     return prepend_javascript_snippet(file.body)
 
 
