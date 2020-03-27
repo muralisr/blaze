@@ -58,7 +58,7 @@ class HarCapturer {
       await client.Page.enable();
       await client.Network.enable();
       await client.Tracing.start();
-      
+      console.log("going to start tracing")
       if(this.options.extractCriticalRequests) {
         await client.Runtime.enable();
         client.Runtime.consoleAPICalled((loggedObject) => {
