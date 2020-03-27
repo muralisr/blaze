@@ -67,9 +67,9 @@ class HarCapturer {
               let logOutput = element["value"];
               try {
                 if (typeof(logOutput) == "string" && logOutput.indexOf("alohomora_output") >= 0) {
-                    logOutput = JSON.parse(logOutput);
                     process.stdout.write("got alohamora output")
-                    process.stdout.write(logOutput)
+                    process.stdout.write(logOutput)  
+                    logOutput = JSON.parse(logOutput);
                     logOutput["alohomora_output"].forEach(e => this.critical_request_urls.push(e));   
               }} catch (error) {
                 console.error(`critical req not found. `, error);
