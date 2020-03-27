@@ -85,6 +85,8 @@ def start_server(
     :param policy: The path to the push/preload policy to use for the server
     """
     log = logger.with_namespace("replay_server")
+    log.debug("murali entered server")
+    print("hello murali")
     push_policy = policy.as_dict["push"] if policy else {}
     preload_policy = policy.as_dict["preload"] if policy else {}
 
