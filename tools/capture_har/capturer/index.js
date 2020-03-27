@@ -226,8 +226,6 @@ class HarCapturer {
       .map (r => {
         r.critical = false;
         r.viewport_occupied = 0.0;
-        // r.critical = true;
-        // r.viewport_occupied = 0.1;
         if (this.options.extractCriticalRequests == false) {
           return r;
         }
