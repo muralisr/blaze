@@ -87,8 +87,10 @@ class HarCapturer {
 
       
       await client.Page.navigate({ url: this.url });
+      console.log("starting navigate")
       this.navStart = Date.now();
       await client.Page.loadEventFired();
+      console.log("load complete")
       await client.Tracing.end();
       return new Promise((resolve, reject) => {
         client.Tracing.tracingComplete(() => {
