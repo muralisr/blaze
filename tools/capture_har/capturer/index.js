@@ -61,8 +61,10 @@ class HarCapturer {
       console.log("going to start tracing")
       if(this.options.extractCriticalRequests) {
         await client.Runtime.enable();
+        console.log("runtime enabled")
         client.Runtime.consoleAPICalled((loggedObject) => {
           if(loggedObject.type != 'log') return;
+          console.log("console api logged")
           if (typeof(loggedObject.args) != "undefined") {
             for (let index = 0; index < loggedObject.args.length; index++) {
               const element = loggedObject.args[index];
@@ -103,6 +105,7 @@ class HarCapturer {
   }
 
   logRequest({ requestId, request, initiator}) {
+    console.log("log request")
     this.resources[requestId] = {
       started_date_time: (new Date()).toISOString(),
       critical: false,
@@ -130,6 +133,7 @@ class HarCapturer {
   }
 
   logResponse({ requestId, response }) {
+    console.log("log response")
     const url = this.resources[requestId].request.url;
     this.resources[requestId].response = {
       status: response.status,
