@@ -79,7 +79,9 @@ class HarCapturer {
             }
           } 
         });
-      } 
+      } else {
+        console.log("critical requests is disabled")
+      }
 
       
       await client.Page.navigate({ url: this.url });
