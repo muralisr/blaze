@@ -82,8 +82,6 @@ def start_server(
     :param policy: The path to the push/preload policy to use for the server
     """
     log = logger.with_namespace("replay_server")
-    log.debug("murali entered server")
-    print("hello murali")
     push_policy = policy.as_dict["push"] if policy else {}
     preload_policy = policy.as_dict["preload"] if policy else {}
 
@@ -99,12 +97,10 @@ def start_server(
 
     # Save files and create nginx configuration
     config = Config()
-    log.debug("murali in log debug")
     with tempfile.TemporaryDirectory() as file_dir:
         log.debug("storing temporary files in", file_dir=file_dir)
 
         for host, files in filestore.files_by_host.items():
-            log.debug("creating host ", host=host)
             log.info("creating host", host=host, address=host_ip_map[host])
             uris_served = set()
 
@@ -114,13 +110,10 @@ def start_server(
             )
 
             for file in files:
-                log.debug("checking if i should append to file")
                 # Handles the case where we may have duplicate URIs for a single host
                 # or where URIs in nginx cannot be too long
                 if file.uri in uris_served or len(file.uri) > 3600 or len(file.headers.get("location", "")) > 3600:
-                    log.debug("skipping uri serve ", file_name=file)
                     continue
-                log.debug("going to work on file ", file_name=file)
                 uris_served.add(file.uri)
                 log.debug(
                     "serve",
@@ -144,14 +137,10 @@ def start_server(
 
                 backup_file_body = file.body
                 try:
-                    log.with_namespace("murali").warn("checking if i can inject js")
                     if extract_critical_requests and "text/html" in file.headers.get("content-type", ""):
-                        log.with_namespace("murali").warn("injecting js")
                         file.body = inject_extract_critical_requests_javascript(file)
                     file_path = os.path.join(file_dir, file.file_name)
-                    log.with_namespace("murali").warn("finished injecting")
                     with open(os.open(file_path, os.O_CREAT | os.O_WRONLY, 0o644), "wb") as f:
-                        log.with_namespace("murali").warn("written back to disk")
                         f.write(file.body)
                 except TypeError as e:
                     file_path = os.path.join(file_dir, file.file_name)
