@@ -33,7 +33,7 @@ def prepend_javascript_snippet(input_string: str):
         return str(soup)
     dir_name = "/opt/blaze/blaze/mahimahi/server/injected-javascript"
     for file_name in ["find-in-viewport.js", "interceptor.js"]:
-        log.debug("prepending interceptor javascript")
+        print("prepending interceptor javascript")
         curr_file = os.path.join(dir_name, file_name)
         with open(curr_file) as f:
             file_contents = f.read()
@@ -60,9 +60,9 @@ def inject_extract_critical_requests_javascript(file):
         out = BytesIO()
         with gzip.GzipFile(fileobj=out, mode="wb") as f:
             f.write(uncompressed_body.encode())
-        log.debug("it was compressed. prepending and returning.")
+        print("it was compressed. prepending and returning.")
         return out.getvalue()
-    log.debug("it was not compressed. NOT prepending and returning.")
+    print("it was not compressed. NOT prepending and returning.")
     return prepend_javascript_snippet(file.body)
 
 
@@ -141,14 +141,14 @@ def start_server(
 
                 backup_file_body = file.body
                 try:
-                    log.debug("checking if i can inject js")
+                    print("checking if i can inject js")
                     if extract_critical_requests and "text/html" in file.headers.get("content-type", ""):
-                        log.debug("injecting js")
+                        print("injecting js")
                         file.body = inject_extract_critical_requests_javascript(file)
                     file_path = os.path.join(file_dir, file.file_name)
-                    log.debug("finished injecting")
+                    print("finished injecting")
                     with open(os.open(file_path, os.O_CREAT | os.O_WRONLY, 0o644), "wb") as f:
-                        log.debug("written back to disk")
+                        print("written back to disk")
                         f.write(file.body)
                 except TypeError as e:
                     file_path = os.path.join(file_dir, file.file_name)
