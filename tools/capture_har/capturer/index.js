@@ -269,10 +269,10 @@ const captureHar = async (url, slowdown, extractCriticalRequests, userDataDir) =
       chromeFlags.push(`--user-data-dir=${userDataDir}`)
     }
     chrome = await chromeLauncher.launch({ chromeFlags });
-    print("chrome launched with pid")
-    print(chrome.pid)
     await asyncWait(2000);
-
+    console.log("chrome launched with pid")
+    console.log(chrome.pid)
+    
     const capturer = new HarCapturer({
       host: "localhost",
       port: chrome.port,
