@@ -141,10 +141,14 @@ def start_server(
 
                 backup_file_body = file.body
                 try:
+                    print("checking if i can inject js")
                     if extract_critical_requests and "text/html" in file.headers.get("content-type", ""):
+                        print("injecting js")
                         file.body = inject_extract_critical_requests_javascript(file)
                     file_path = os.path.join(file_dir, file.file_name)
+                    print("finished injecting")
                     with open(os.open(file_path, os.O_CREAT | os.O_WRONLY, 0o644), "wb") as f:
+                        print("written back to disk")
                         f.write(file.body)
                 except TypeError as e:
                     file_path = os.path.join(file_dir, file.file_name)
