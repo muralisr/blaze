@@ -33,16 +33,12 @@ class HarCapturer {
   }
 
   async captureHar() {
-    console.log("inside capture har")
     let client;
     try {
       client = await chromeRemoteDebugger({
         host: this.host,
         port: this.port
       });
-      console.log("client is ready with chrome debugger")
-      console.log(this.host)
-      console.log(this.port)
       if (this.options.slowdown && this.options.slowdown > 1) {
         if (client.Emulation.canEmulate()) {
           await client.Emulation.setCPUThrottlingRate({
@@ -61,13 +57,10 @@ class HarCapturer {
       await client.Page.enable();
       await client.Network.enable();
       await client.Tracing.start();
-      console.log("going to start tracing")
       if(this.options.extractCriticalRequests) {
         await client.Runtime.enable();
-        console.log("runtime enabled")
         client.Runtime.consoleAPICalled((loggedObject) => {
           if(loggedObject.type != 'log') return;
-          console.log("console api logged")
           if (typeof(loggedObject.args) != "undefined") {
             for (let index = 0; index < loggedObject.args.length; index++) {
               const element = loggedObject.args[index];
@@ -75,8 +68,8 @@ class HarCapturer {
               try {
                 if (typeof(logOutput) == "string" && logOutput.indexOf("alohomora_output") >= 0) {
                     logOutput = JSON.parse(logOutput);
-                    console.log("got alohamora output")
-                    console.log(logOutput)
+                    process.stdout.write("got alohamora output")
+                    process.stdout.write(logOutput)
                     logOutput["alohomora_output"].forEach(e => this.critical_request_urls.push(e));   
               }} catch (error) {
                 console.error(`critical req not found. `, error);
@@ -84,16 +77,12 @@ class HarCapturer {
             }
           } 
         });
-      } else {
-        console.log("critical requests is disabled")
       }
 
       
       await client.Page.navigate({ url: this.url });
-      console.log("starting navigate")
       this.navStart = Date.now();
       await client.Page.loadEventFired();
-      console.log("load complete")
       await client.Tracing.end();
       return new Promise((resolve, reject) => {
         client.Tracing.tracingComplete(() => {
@@ -102,8 +91,6 @@ class HarCapturer {
         });
       });
     } catch (err) {
-      console.log("error happened")
-      console.log(err)
       if (client) {
         client.close();
       }
@@ -112,7 +99,6 @@ class HarCapturer {
   }
 
   logRequest({ requestId, request, initiator}) {
-    console.log("log request")
     this.resources[requestId] = {
       started_date_time: (new Date()).toISOString(),
       critical: false,
@@ -140,7 +126,6 @@ class HarCapturer {
   }
 
   logResponse({ requestId, response }) {
-    console.log("log response")
     const url = this.resources[requestId].request.url;
     this.resources[requestId].response = {
       status: response.status,
@@ -275,9 +260,6 @@ const captureHar = async (url, slowdown, extractCriticalRequests, userDataDir) =
     }
     chrome = await chromeLauncher.launch({ chromeFlags });
     await asyncWait(2000);
-    console.log("chrome launched with pid")
-    console.log(chrome.pid)
-    console.log(chrome.process)
     const capturer = new HarCapturer({
       host: "localhost",
       port: chrome.port,
@@ -314,7 +296,6 @@ module.exports = async (url, slowdown, outputFile, extractCriticalRequests, user
     }
   } else {
     // user did not pass in user-data-dir. just do once and return output. 
-    console.log("going to capture har")
     const res = await captureHar(url, slowdown, extractCriticalRequests, userDataDir);
     const json = JSON.stringify(res);
     if (outputFile) {
