@@ -1,6 +1,12 @@
 var imagesInViewPort = []
+var speedIndex = {}
 
 
+function getViewportSize() {
+    var windowRight = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth;
+    var windowHeight = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight;
+    return windowHeight * windowRight;
+}
 
 function isElementInViewport (el) {
     //special bonus for those using jQuery
@@ -19,6 +25,43 @@ function isElementInViewport (el) {
 	return vertInView && horzInView;
 }
 
+function getSpeedIndexContribution(node) {
+    
+    if(!isElementInViewport(node)) {
+        return 0;
+    }
+    // given a node, we need to find out the area visible in the viewport
+
+    
+    var rect = node.getBoundingClientRect();
+
+    // if image x is > 0, then left top x is image.x
+    var leftTopX = rect.x > 0 ? rect.x : 0;
+
+    // if image y is > 0, then left top y is image.y
+    var leftTopY = rect.y > 0 ? rect.y : 0;
+    
+    // if image x is < viewport.width, then right bottom x is image.x
+    var windowRight = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth;
+    var rightBottomX = rect.right < windowRight ? rect.right : windowRight;
+    
+    // if image y is < viewport.height, then right bottom y is image.y
+    var windowHeight = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight;
+    var rightBottomY = rect.bottom < windowHeight ? rect.bottom : windowHeight;
+
+
+    var lengthOfRectangle = rightBottomX - leftTopX;
+    var heightOfRectangle = rightBottomY - leftTopY;
+
+    // here, we should divide by the total occupied viewport size
+    // we will know this once we finish populating the speedIndex array
+    // i.e. once we know area of each element in viewport. so it is done later
+    // in normalizedSpeedIndex. there, we know the total occupied area
+    // then, each element's respective contribution can be computed
+    // console.log("returning speed index contribution as ", lengthOfRectangle * heightOfRectangle)
+    return lengthOfRectangle * heightOfRectangle;
+}
+
 
 function getCriticalRequests() {
     var importantRequests = []
@@ -30,6 +73,43 @@ function getCriticalRequests() {
         }
     })
     return importantRequests
+}
+
+function normalizeSpeedIndices(speedIndexLocal) {
+    // speedIndexLocal is a dict of url -> viewport area 
+    // for each element, we divide by the total occupied viewport area
+    var totalArea = 0;
+    for (var key in speedIndexLocal) {
+        if (speedIndexLocal.hasOwnProperty(key)) {
+            totalArea = totalArea + speedIndexLocal[key];
+        }
+    }
+    if (totalArea == 0) {
+        totalArea = 1;
+    }
+    for (var key in speedIndexLocal) {
+        if (speedIndexLocal.hasOwnProperty(key)) {
+            var currentValue = speedIndexLocal[key];
+            var newValue = currentValue * 1.0 / totalArea;
+            speedIndexLocal[key] = newValue;
+        }   
+    }
+    return speedIndexLocal
+}
+
+function getSpeedIndicesOfElementsInViewport() {
+    // speedIndex is a global variable.
+    // if we have not intercepted any javascript, just return compute speedindex for images
+    if (typeof(urlRequestors) == 'undefined' || urlRequestors == null) return normalizeSpeedIndices(speedIndex);
+    // for each js file
+    urlRequestors.forEach(function(k) {
+        // if it has sent any image to the viewport
+        if (imagesInViewPort.indexOf(k.url) >= 0) {
+            // we assign the javascript file a speedindex value equal to the image it sent to the viewport
+            speedIndex[k.initiator] = speedIndex[k.url];
+        }
+    })
+    return normalizeSpeedIndices(speedIndex)
 }
 
 
@@ -47,6 +127,7 @@ function findAndPrintImagesInViewport(ele) {
                     }
                     if (url != null) {
                         imagesInViewPort.push(url)
+                        speedIndex[url] = getSpeedIndexContribution(node);
                     }
             } else {
                 var style = window.getComputedStyle(node)
@@ -82,17 +163,19 @@ function findAndPrintImagesInViewport(ele) {
                         link.href = potentialURL;
                         if(potentialURL.index("data:image") < 0)
                             imagesInViewPort.push(link.href)
+                            speedIndex[link.href] = getSpeedIndexContribution(node);
                     }
                 }
             }  
             }           
         } catch (error) {
-            console.error("ignoring node due to error ", error)
+            // console.error("ignoring node due to error ", error)
         }
 
     });
-    var answer = getCriticalRequests()
-    console.log(JSON.stringify({'alohomora_output': answer}))
+    var critical_requests = getCriticalRequests()
+    var speed_indices = getSpeedIndicesOfElementsInViewport()
+    console.log(JSON.stringify({'alohomora_output': critical_requests, 'speed_index': speed_indices}))
 }
 
 
