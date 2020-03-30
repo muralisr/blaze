@@ -168,6 +168,8 @@ class Simulator:
                 self.speed_index_added_viewport.append(node.resource.viewport_occupied)
             # elif get_speed_index:
             #     self.log.debug("SI is true, but element viewport occupied is 0")
+            if node.resource.url == 'https://www.walgreens.com/common/react/assets/images/walgreens_logo.png?o=acs':
+                self.log.debug("XXXXXXXXXX ", resource=node.resource)
             self.log.debug("resource completed with viewport occupied as ", resource=node.resource.url, viewport_occupied=node.resource.viewport_occupied)
             self.log.verbose("resource completed", resource=node.resource.url, time=self.completed_nodes[node])
 
