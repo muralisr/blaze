@@ -454,9 +454,11 @@ class Simulator:
         # that contains the currently shown viewport at each instance of time
         # and this list represents the Y value.
 
+        self.log.warn("total_viewport_drawn is ", total_viewport_drawn=total_viewport_drawn)
         total_viewport_drawn = []
         current_viewport_drawn = 0
         for element in self.speed_index_added_viewport:
+            self.log.warn("appending to viewport drawn ", current_viewport_drawn=current_viewport_drawn)
             current_viewport_drawn += element
             total_viewport_drawn.append(current_viewport_drawn)
 
@@ -471,7 +473,8 @@ class Simulator:
             x_1 = self.speed_index_time[index + 1]
             total_area_under_curve += 0.5 * (x_1 - x_0) * (y_0 + y_1)
         self.log.warn("computed area under the curve ", total_area_under_curve=total_area_under_curve)
-
+        self.log.warn("speed_index_time is ", speed_index_time=speed_index_time)
+        self.log.warn("total_viewport_drawn is ", total_viewport_drawn=total_viewport_drawn)
         # we have area under the curve
         # but we actually need the area above the curve.
         # so let us compute the area of the graph and subtract
