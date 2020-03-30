@@ -454,8 +454,8 @@ class Simulator:
         # that contains the currently shown viewport at each instance of time
         # and this list represents the Y value.
 
-        self.log.warn("total_viewport_drawn is ", total_viewport_drawn=total_viewport_drawn)
         total_viewport_drawn = []
+        self.log.warn("total_viewport_drawn is ", total_viewport_drawn=total_viewport_drawn)
         current_viewport_drawn = 0
         for element in self.speed_index_added_viewport:
             self.log.warn("appending to viewport drawn ", current_viewport_drawn=current_viewport_drawn)
