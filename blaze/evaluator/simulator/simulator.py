@@ -487,11 +487,14 @@ class Simulator:
         increment_interval = 100 # increment by 100 ms
         index_at_speed_index = 0
         while index_at_speed_index < len(self.speed_index_time): # go until end of plt
+            interval_score = 0
             while index_at_speed_index < len(self.speed_index_time) and current_time >= self.speed_index_time[index_at_speed_index]:
-                interval_score = increment_interval * (1.0 - (total_viewport_drawn[index_at_speed_index] / 100.0))
+                interval_score += increment_interval * (1.0 - (total_viewport_drawn[index_at_speed_index] / 100.0))
+                self.log.info("adding to interval score in A ", interval_score=interval_score)
                 index_at_speed_index += 1
             else:
                 interval_score = increment_interval * (1.0 - (0 / 100.0))
+                self.log.info("adding to interval score in B ", interval_score=interval_score)
             current_time += increment_interval
             list_of_interval_scores.append(interval_score)
 
