@@ -166,7 +166,7 @@ class Simulator:
                 self.log.debug("appending something to speed_index_time ", viewport=node.resource.viewport_occupied)
                 self.speed_index_time.append(self.total_time_ms)
                 self.speed_index_added_viewport.append(node.resource.viewport_occupied)
-            elif: get_speed_index:
+            elif get_speed_index:
                 self.log.debug("SI is true, but element viewport occupied is 0")
             self.log.debug("resource completed with viewport occupied as ", resource=node.resource.url, viewport_occupied=node.resource.viewport_occupied)
             self.log.verbose("resource completed", resource=node.resource.url, time=self.completed_nodes[node])
