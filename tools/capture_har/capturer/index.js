@@ -239,13 +239,17 @@ class HarCapturer {
           if (this.critical_request_urls.includes(r.request.url)) {
             r.critical = true;
             process.stdout.write('\n')
-            process.stdout.write("adding to critical request")
-            process.stdout.write(r.request.url)
-            process.stdout.write(this.viewport_occupied_for_urls[r.request.url] + "")
-            process.stdout.write('\n')  
+            process.stdout.write("found a critical request")
+            process.stdout.write(r.request.url + " ")
             if(r.request.url in this.viewport_occupied_for_urls) {
+              process.stdout.write("it was in viewport_occupied array ")
+              process.stdout.write(this.viewport_occupied_for_urls[r.request.url] + " ")
+              process.stdout.write('\n')  
               r.viewport_occupied = this.viewport_occupied_for_urls[r.request.url];
             } else {
+              process.stdout.write("it was NOT in viewport_occupied array ")
+              process.stdout.write(this.viewport_occupied_for_urls[r.request.url] + " ")
+              process.stdout.write('\n')  
               r.viewport_occupied = 0.0;
             }
           }
