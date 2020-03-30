@@ -30,7 +30,7 @@ class HarCapturer {
     this.timings = {};
     this.events = [];
     this.critical_request_urls = [];
-    this.viewport_occupied = {};
+    this.viewport_occupied_for_urls = {};
   }
 
   async captureHar() {
@@ -74,7 +74,7 @@ class HarCapturer {
                     logOutput["alohomora_output"].forEach(e => this.critical_request_urls.push(e));
                     for (let key in logOutput["speed_index"]) {
                       if (logOutput["speed_index"].hasOwnProperty(key)) {
-                        this.viewport_occupied[key] = logOutput["speed_index"][key];
+                        this.viewport_occupied_for_urls[key] = logOutput["speed_index"][key];
                       }
                     }
               }} catch (error) {
@@ -239,11 +239,11 @@ class HarCapturer {
           process.stdout.write('\n')
           process.stdout.write("adding to critical request")
           process.stdout.write(r.request.url)
-          process.stdout.write(this.viewport_occupied[r.request.url] + "")
+          process.stdout.write(this.viewport_occupied_for_urls[r.request.url] + "")
           process.stdout.write('\n')
           if (this.critical_request_urls.includes(r.request.url)) {
             r.critical = true;
-            r.viewport_occupied = this.viewport_occupied[r.request.url];
+            r.viewport_occupied = this.viewport_occupied_for_urls[r.request.url];
           }
           return r;
         }
