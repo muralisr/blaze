@@ -235,7 +235,7 @@ class HarCapturer {
           process.stdout.write('\n')
           process.stdout.write("adding to critical request")
           process.stdout.write(r.request.url)
-          process.stdout.write(this.viewport_occupied[r.request.url])
+          process.stdout.write(this.viewport_occupied[r.request.url] + "")
           process.stdout.write('\n')
           if (this.critical_request_urls.includes(r.request.url)) {
             r.critical = true;
