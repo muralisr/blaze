@@ -49,13 +49,8 @@ class Simulator:
         # when a new image is drawn on screen, it's contribution to
         # the viewport is pushed into added_viewport and the time
         # this happened is stored in index_time.
-        # total_viewport represents the target/total viewport that
-        # will be occupied when all images are consider loaded.
-        # i.e. summing up all the values in added_viewport
-        # should give us the total_viewport value
         self.speed_index_time = []
         self.speed_index_added_viewport = []
-        self.speed_index_total_viewport = 1
 
     def reset_simulation(
         self, client_env: ClientEnvironment, policy: Optional[Policy] = None, cached_urls: Optional[Set[str]] = None
@@ -73,6 +68,8 @@ class Simulator:
         self.completed_nodes = {}
         self.pushed_nodes = {}
         self.total_time_ms = 0
+        self.speed_index_time = []
+        self.speed_index_added_viewport = []
         self.cached_urls = cached_urls if cached_urls else set()
 
         self.no_push = None
