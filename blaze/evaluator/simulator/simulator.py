@@ -486,8 +486,8 @@ class Simulator:
         current_time = 0 # start at 0 ms
         increment_interval = 100 # increment by 100 ms
         index_at_speed_index = 0
-        while index_at_speed_index < len(speed_index_time): # go until end of plt
-            while current_time >= speed_index_time[index_at_speed_index]:
+        while index_at_speed_index < len(self.speed_index_time): # go until end of plt
+            while current_time >= self.speed_index_time[index_at_speed_index]:
                 interval_score = increment_interval * (1.0 - (total_viewport_drawn[index_at_speed_index] / 100.0))
                 index_at_speed_index += 1
             else:
