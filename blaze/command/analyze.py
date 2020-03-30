@@ -77,7 +77,9 @@ def page_load_time(args):
     log.info("calculating page load time", manifest=args.from_manifest, url=env_config.request_url)
     plt, orig_plt = 0, 0
     if not args.only_simulator:
+        log.info("requested using web server as well")
         if not args.speed_index:
+            log.info("requested PLT and not SI")
             orig_plt, *_ = get_page_load_time_in_replay_server(
                 request_url=config.env_config.request_url,
                 client_env=client_env,
@@ -86,6 +88,7 @@ def page_load_time(args):
                 user_data_dir=args.user_data_dir,
             )
             if policy:
+                log.info("requested PLT and not SI with policy")
                 plt, *_ = get_page_load_time_in_replay_server(
                     request_url=config.env_config.request_url,
                     client_env=client_env,
@@ -95,6 +98,7 @@ def page_load_time(args):
                     user_data_dir=args.user_data_dir,
                 )
         else:
+            log.info("requested speed index in replay server")
             orig_plt = get_speed_index_in_replay_server(
                 request_url=config.env_config.request_url,
                 client_env=client_env,
@@ -103,6 +107,7 @@ def page_load_time(args):
                 user_data_dir=args.user_data_dir,
             )
             if policy:
+                log.info("requested SI in replay server with policy")
                 plt = get_speed_index_in_replay_server(
                     request_url=config.env_config.request_url,
                     client_env=client_env,
@@ -115,9 +120,11 @@ def page_load_time(args):
     log.debug("running simulator...")
     sim = Simulator(env_config)
     if not args.speed_index:
+        log.info("NOT speed index")
         orig_sim_plt = sim.simulate_load_time(client_env)
         sim_plt = sim.simulate_load_time(client_env, policy)
     else:
+        log.info("YES speed index")
         orig_sim_plt = sim.simulate_speed_index(client_env)
         sim_plt = sim.simulate_speed_index(client_env, policy)
     print(
