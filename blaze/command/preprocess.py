@@ -106,6 +106,7 @@ def annotate_critical_requests(website, config, client_env, push_groups: List[Pu
     for group in push_groups:
         for i, res in enumerate(group.resources):
             if res.url in critical_requests:
+                log.debug("setting resource to critical and with viewport setting ", viewport_occupied=viewport_occupied[res.url])
                 group.resources[i] = res._replace(critical=True, viewport_occupied=viewport_occupied[res.url])
 
     return push_groups
