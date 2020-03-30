@@ -66,13 +66,16 @@ function getSpeedIndexContribution(node) {
 function getCriticalRequests() {
     var importantRequests = []
     importantRequests = imagesInViewPort.map(function(url) {return url;});
+    console.log("alohomora_debug: inside getCriticalRequests")
     if (typeof(urlRequestors) == 'undefined' || urlRequestors == null) return importantRequests;
+    console.log("alohomora_debug: urlrequestors is NOT null")
     urlRequestors.forEach(function(k) {
+        console.log("alohomora_debug: checking first url requestor")
         if (imagesInViewPort.indexOf(k.url) >= 0) {
-            console.log("alohamora_debug: adding js initiator as image is in viewport ", k.initiator, k.url)
+            console.log("alohomora_debug: adding js initiator as image is in viewport ", k.initiator, k.url)
             importantRequests = importantRequests.concat(k.initiator)
         } else {
-            console.log("alohamora_debug: IGNORING js initiator as image is NOT in viewport ", k.initiator, k.url)
+            console.log("alohomora_debug: IGNORING js initiator as image is NOT in viewport ", k.initiator, k.url)
         }
     })
     return importantRequests
