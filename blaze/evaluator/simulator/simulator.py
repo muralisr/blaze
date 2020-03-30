@@ -163,8 +163,11 @@ class Simulator:
         for node in completed_this_step:
             self.completed_nodes[node] = self.total_time_ms + node.resource.execution_ms
             if get_speed_index and node.resource.viewport_occupied > 0.0: # we are tracking speed index and the currently completed node contributes a non-zero amount to the viewport which means it affects ths speed index
+                self.log.debug("appending something to speed_index_time ", viewport=node.resource.viewport_occupied)
                 self.speed_index_time.append(self.total_time_ms)
                 self.speed_index_added_viewport.append(node.resource.viewport_occupied)
+            elif: get_speed_index:
+                self.log.debug("SI is true, but element viewport occupied is 0")
             self.log.debug("resource completed with viewport occupied as ", resource=node.resource.url, viewport_occupied=node.resource.viewport_occupied)
             self.log.verbose("resource completed", resource=node.resource.url, time=self.completed_nodes[node])
 
@@ -473,7 +476,7 @@ class Simulator:
             x_1 = self.speed_index_time[index + 1]
             total_area_under_curve += 0.5 * (x_1 - x_0) * (y_0 + y_1)
         self.log.warn("computed area under the curve ", total_area_under_curve=total_area_under_curve)
-        self.log.warn("speed_index_time is ", speed_index_time=speed_index_time)
+        self.log.warn("speed_index_time is ", speed_index_time=self.speed_index_time)
         self.log.warn("total_viewport_drawn is ", total_viewport_drawn=total_viewport_drawn)
         # we have area under the curve
         # but we actually need the area above the curve.
