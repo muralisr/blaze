@@ -243,7 +243,11 @@ class HarCapturer {
           process.stdout.write('\n')
           if (this.critical_request_urls.includes(r.request.url)) {
             r.critical = true;
-            r.viewport_occupied = this.viewport_occupied_for_urls[r.request.url];
+            if(r.request.url in this.viewport_occupied_for_urls) {
+              r.viewport_occupied = this.viewport_occupied_for_urls[r.request.url];
+            } else {
+              r.viewport_occupied = 0.0;
+            }
           }
           return r;
         }
