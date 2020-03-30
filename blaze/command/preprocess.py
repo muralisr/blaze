@@ -100,6 +100,7 @@ def annotate_critical_requests(website, config, client_env, push_groups: List[Pu
     viewport_occupied = {}
     for har_entry in har.log.entries:
         if har_entry.critical:
+            log.debug("har_entry is critical. ", har_entry=har_entry)
             viewport_occupied[har_entry.request.url] = har_entry.viewport_occupied
 
     for group in push_groups:
