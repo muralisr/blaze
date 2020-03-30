@@ -69,6 +69,7 @@ function getCriticalRequests() {
     if (typeof(urlRequestors) == 'undefined' || urlRequestors == null) return importantRequests;
     urlRequestors.forEach(function(k) {
         if (imagesInViewPort.indexOf(k.url) >= 0) {
+            console.log("alohamora_debug: adding js initiator as image is in viewport ", k.initiator, k.url)
             importantRequests = importantRequests.concat(k.initiator)
         }
     })

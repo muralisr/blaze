@@ -77,6 +77,10 @@ class HarCapturer {
                         this.viewport_occupied_for_urls[key] = logOutput["speed_index"][key];
                       }
                     }
+              } else if (typeof(logOutput) == "string" && logOutput.indexOf("alohomora_debug") >= 0) {
+                    process.stdout.write("got alohamora debug:\n")
+                    process.stdout.write(logOutput)
+                    process.stdout.write("\n")
               }} catch (error) {
                 console.error(`critical req not found. `, error);
               }
