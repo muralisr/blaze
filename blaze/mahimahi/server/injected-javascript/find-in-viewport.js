@@ -71,6 +71,8 @@ function getCriticalRequests() {
         if (imagesInViewPort.indexOf(k.url) >= 0) {
             console.log("alohamora_debug: adding js initiator as image is in viewport ", k.initiator, k.url)
             importantRequests = importantRequests.concat(k.initiator)
+        } else {
+            console.log("alohamora_debug: IGNORING js initiator as image is NOT in viewport ", k.initiator, k.url)
         }
     })
     return importantRequests

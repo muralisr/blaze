@@ -68,7 +68,7 @@ class HarCapturer {
               let logOutput = element["value"];
               try {
                 if (typeof(logOutput) == "string" && logOutput.indexOf("alohomora_output") >= 0) {
-                    process.stdout.write("got alohamora output")
+                    process.stdout.write("\ngot alohamora output\n")
                     process.stdout.write(logOutput)  
                     logOutput = JSON.parse(logOutput);
                     logOutput["alohomora_output"].forEach(e => this.critical_request_urls.push(e));
@@ -78,7 +78,7 @@ class HarCapturer {
                       }
                     }
               } else if (typeof(logOutput) == "string" && logOutput.indexOf("alohomora_debug") >= 0) {
-                    process.stdout.write("got alohamora debug:\n")
+                    process.stdout.write("\ngot alohamora debug:\n")
                     process.stdout.write(logOutput)
                     process.stdout.write("\n")
               }} catch (error) {
