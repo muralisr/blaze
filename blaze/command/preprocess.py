@@ -80,6 +80,9 @@ def preprocess(args):
     log.info("finding cacheable objects")
     push_groups = annotate_cacheable_objects(args.record_dir, push_groups)
 
+    log.info("annotating critical in har resources")
+    har_resources = annotate_critical_requests_har_resources(args.website, config, client_env, har_resources)
+
     log.debug("har resources is ", har_resources=har_resources)
     log.info("generating configuration...")
     env_config = EnvironmentConfig(
@@ -111,6 +114,28 @@ def annotate_critical_requests(website, config, client_env, push_groups: List[Pu
                 group.resources[i] = res._replace(critical=True, viewport_occupied=viewport_occupied[res.url])
 
     return push_groups
+
+def annotate_critical_requests_har_resources(website, config, client_env, har_resources: List[Resource]) -> List[Resource]:
+    """
+    Modifies the passed in list of Resources by capturing another HAR, checking the critical requests
+    and annotating the ones that are critical in the push groups
+    """
+
+    har = capture_har_in_replay_server(website, config, client_env, extract_critical_requests=True)
+    critical_requests = set(h.request.url for h in har.log.entries if h.critical)
+    log.debug("critical requests before annotating", resources=critical_requests)
+    viewport_occupied = {}
+    for har_entry in har.log.entries:
+        if har_entry.critical:
+            log.debug("har_entry is critical. ", har_entry=har_entry)
+            viewport_occupied[har_entry.request.url] = har_entry.viewport_occupied
+
+    for i, res in enumerate(har_resources):
+        if res.url in critical_requests:
+                log.debug("setting resource to critical and with viewport setting ", viewport_occupied=viewport_occupied[res.url])
+                har_resources[i] = res._replace(critical=True, viewport_occupied=viewport_occupied[res.url])
+
+    return har_resources
 
 
 def annotate_cacheable_objects(record_dir: str, push_groups: List[PushGroup]) -> List[PushGroup]:
