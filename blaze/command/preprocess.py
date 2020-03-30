@@ -80,6 +80,7 @@ def preprocess(args):
     log.info("finding cacheable objects")
     push_groups = annotate_cacheable_objects(args.record_dir, push_groups)
 
+    log.debug("har resources is ", har_resources=har_resources)
     log.info("generating configuration...")
     env_config = EnvironmentConfig(
         replay_dir=args.record_dir, request_url=args.website, push_groups=push_groups, har_resources=har_resources
