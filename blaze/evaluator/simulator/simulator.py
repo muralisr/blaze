@@ -163,15 +163,15 @@ class Simulator:
         for node in completed_this_step:
             self.completed_nodes[node] = self.total_time_ms + node.resource.execution_ms
             if get_speed_index and node.resource.viewport_occupied > 0.0: # we are tracking speed index and the currently completed node contributes a non-zero amount to the viewport which means it affects ths speed index
-                self.log.debug("appending something to speed_index_time ", viewport=node.resource.viewport_occupied)
+                self.log.debug("appending something to speed_index_time ", viewport=node.resource.viewport_occupied, speed_index_time=self.speed_index_time, appended_time=self.total_time_ms)
                 self.speed_index_time.append(self.total_time_ms)
                 self.speed_index_added_viewport.append(node.resource.viewport_occupied)
             # elif get_speed_index:
             #     self.log.debug("SI is true, but element viewport occupied is 0")
-            if node.resource.url == 'https://www.walgreens.com/common/react/assets/images/walgreens_logo.png?o=acs':
-                self.log.debug("XXXXXXXXXX ", resource=node.resource)
-            self.log.debug("resource completed with viewport occupied as ", resource=node.resource.url, viewport_occupied=node.resource.viewport_occupied)
-            self.log.verbose("resource completed", resource=node.resource.url, time=self.completed_nodes[node])
+            # if node.resource.url == 'https://www.walgreens.com/common/react/assets/images/walgreens_logo.png?o=acs':
+            #     self.log.debug("XXXXXXXXXX ", resource=node.resource)
+            #self.log.debug("resource completed with viewport occupied as ", resource=node.resource.url, viewport_occupied=node.resource.viewport_occupied)
+            # self.log.verbose("resource completed", resource=node.resource.url, time=self.completed_nodes[node])
 
     def schedule_child_requests(self, parent: Node, dry_run=False) -> Optional[List[Tuple[Node, float]]]:
         """
@@ -480,6 +480,11 @@ class Simulator:
                 total_viewport_drawn[i] = ele / normalizer
 
         self.log.info("total_viewport drawn after normalizing is ", total_viewport_drawn=total_viewport_drawn)
+        
+        
+        # The Speed Index is the "area above the curve" calculated in ms and using 0.0-1.0 for the range of visually complete.  The calculation looks at each 0.1s interval and calculates IntervalScore = Interval * (1.0 - (Completeness/100)) where Completeness is the % Visually complete for that frame and Interval is the elapsed time for that video frame in ms (100 in this case).  The overall score is just a sum of the individual intervals: SUM(IntervalScore)
+        # https://sites.google.com/a/webpagetest.org/docs/using-webpagetest/metrics/speed-index#TOC-Measuring-Visual-Progress
+        
         # we apply reimann trapezoidal sum
         # but note that our trapezoid has parallel heights
         # so our formula is time_delta * (y_0+y_1)/2
