@@ -467,6 +467,19 @@ class Simulator:
             current_viewport_drawn += element
             total_viewport_drawn.append(current_viewport_drawn)
 
+
+        log.info("total_viewport drawn before normalizing is ", total_viewport_drawn=total_viewport_drawn)
+        # the total viewport at the end should reach 100. 
+        # if not, we need to normalize the array to make it happen
+        if total_viewport_drawn[-1] != 100:
+            last_element = total_viewport_drawn[-1]
+            normalizer = last_element / 100.0 
+            # irrespective of whether the last_element is > or < than 100
+            # we use the normalizer to bring it to 100
+            for i, ele in enumerate(total_viewport_drawn):
+                total_viewport_drawn[i] = ele / normalizer
+
+        log.info("total_viewport drawn after normalizing is ", total_viewport_drawn=total_viewport_drawn)
         # we apply reimann trapezoidal sum
         # but note that our trapezoid has parallel heights
         # so our formula is time_delta * (y_0+y_1)/2
