@@ -4,7 +4,7 @@ from typing import List
 from blaze.chrome.devtools import capture_har_in_replay_server
 from blaze.config.client import get_default_client_environment
 from blaze.config.config import get_config
-from blaze.config.environment import EnvironmentConfig, PushGroup
+from blaze.config.environment import EnvironmentConfig, PushGroup, Resource
 from blaze.logger import logger as log
 from blaze.mahimahi.server.filestore import FileStore
 from blaze.preprocess.har import har_entries_to_resources
