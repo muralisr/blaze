@@ -72,10 +72,10 @@ function getCriticalRequests() {
     urlRequestors.forEach(function(k) {
         console.log("alohomora_debug: checking first url requestor")
         if (imagesInViewPort.indexOf(k.url) >= 0) {
-            console.log("alohomora_debug: adding js initiator as image is in viewport ", k.initiator, k.url)
+            console.log("alohomora_debug: adding js initiator as image is in viewport " + k.initiator + ", " + k.url)
             importantRequests = importantRequests.concat(k.initiator)
         } else {
-            console.log("alohomora_debug: IGNORING js initiator as image is NOT in viewport ", k.initiator, k.url)
+            console.log("alohomora_debug: IGNORING js initiator as image is NOT in viewport " + k.initiator + ", " + k.url)
         }
     })
     return importantRequests
