@@ -72,8 +72,7 @@ class HarCapturer {
                     process.stdout.write(logOutput)  
                     logOutput = JSON.parse(logOutput);
                     logOutput["alohomora_output"].forEach(e => this.critical_request_urls.push(e));
-                    process.stdout.write("speed_index is")
-                    process.stdout.write(JSON.stringify(logOutput["speed_index"]))
+                    this.viewport_occupied = logOutput["speed_index"];
               }} catch (error) {
                 console.error(`critical req not found. `, error);
               }
@@ -235,7 +234,7 @@ class HarCapturer {
         else {
           if (this.critical_request_urls.includes(r.request.url)) {
             r.critical = true;
-            r.viewport_occupied = 0.1;
+            r.viewport_occupied = this.viewport_occupied[r.request.url];
           }
           return r;
         }
