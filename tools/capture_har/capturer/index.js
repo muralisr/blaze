@@ -30,6 +30,7 @@ class HarCapturer {
     this.timings = {};
     this.events = [];
     this.critical_request_urls = [];
+    this.viewport_occupied = {};
   }
 
   async captureHar() {
@@ -70,7 +71,9 @@ class HarCapturer {
                     process.stdout.write("got alohamora output")
                     process.stdout.write(logOutput)  
                     logOutput = JSON.parse(logOutput);
-                    logOutput["alohomora_output"].forEach(e => this.critical_request_urls.push(e));   
+                    logOutput["alohomora_output"].forEach(e => this.critical_request_urls.push(e));
+                    process.stdout.write("speed_index is")
+                    process.stdout.write(logOutput["speed_index"])
               }} catch (error) {
                 console.error(`critical req not found. `, error);
               }
