@@ -163,8 +163,9 @@ class Simulator:
                 self.log.debug("appending something to speed_index_time ", viewport=node.resource.viewport_occupied, speed_index_time=self.speed_index_time, appended_time=self.total_time_ms)
                 self.speed_index_time.append(self.total_time_ms)
                 self.speed_index_added_viewport.append(node.resource.viewport_occupied)
-            if node.resource.url == 'https://www.homedepot.com/':
+            if node.resource.url == 'https://www.homedepot.com/' or node.resource.url == 'https://www.nytimes.com/' or node.resource.url == 'https://www.walgreens.com/':
                 self.log.debug("appending main page to speed_index_time ", viewport=node.resource.viewport_occupied, speed_index_time=self.speed_index_time, appended_time=self.total_time_ms)
+                self.log.debug("landing page time is ", time=self.total_time_ms)
                 self.speed_index_time.append(self.total_time_ms)
                 self.speed_index_added_viewport.append(1)
             # elif get_speed_index:
