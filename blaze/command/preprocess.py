@@ -128,9 +128,16 @@ def annotate_critical_requests_har_resources(website, config, client_env, har_re
     list_of_viewports = []
     for har_entry in har.log.entries:
         if har_entry.critical:
-            log.debug("har_entry is critical. ", har_entry=har_entry)
-            viewport_occupied[har_entry.request.url] = har_entry.viewport_occupied
-            list_of_viewports.append(har_entry.viewport_occupied)
+            if har_entry.viewport_occupied is not None: # it becomes None because temporarily in find-in-viewport we ignore all non-images
+                log.debug("har_entry is critical. ", har_entry=har_entry)
+                viewport_occupied[har_entry.request.url] = har_entry.viewport_occupied
+                list_of_viewports.append(har_entry.viewport_occupied)
+            else:
+                log.debug("har_entry is critical. ", har_entry=har_entry)
+                viewport_occupied[har_entry.request.url] = 0
+                list_of_viewports.append(0)
+            
+
 
     
     for i, res in enumerate(har_resources):
