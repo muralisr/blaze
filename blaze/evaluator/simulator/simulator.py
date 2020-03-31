@@ -161,7 +161,7 @@ class Simulator:
             self.completed_nodes[node] = self.total_time_ms + node.resource.execution_ms
             if node.resource.url == 'https://www.homedepot.com/' or node.resource.url == 'https://www.nytimes.com/' or node.resource.url == 'https://www.walgreens.com/':
                 self.log.debug("appending main page to speed_index_time ", viewport=node.resource.viewport_occupied, speed_index_time=self.speed_index_time, appended_time=self.total_time_ms)
-                self.log.debug("landing page time is x and appending with viewport", time=self.total_time_ms,viewport=node.resource.viewport_occupied))
+                self.log.debug("landing page time is x and appending with viewport", time=self.total_time_ms,viewport=node.resource.viewport_occupied)
                 self.speed_index_time.append(self.total_time_ms)
                 self.speed_index_added_viewport.append(node.resource.viewport_occupied)
             elif get_speed_index and node.resource.viewport_occupied > 0.0: # we are tracking speed index and the currently completed node contributes a non-zero amount to the viewport which means it affects ths speed index
