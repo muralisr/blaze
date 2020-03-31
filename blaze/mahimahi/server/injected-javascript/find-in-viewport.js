@@ -28,11 +28,11 @@ function isElementInViewport (el) {
 function getSpeedIndexContribution(node, debugMode=false) {
     
     if(!isElementInViewport(node)) {
-        console.log("alohomora_output: element not in viewport")
+        console.log("alohomora_debug: element not in viewport")
         return 0;
     }
     if (debugMode) {
-        console.log("alohomora_output: element is in viewport.")
+        console.log("alohomora_debug: element is in viewport.")
     }
 
     // given a node, we need to find out the area visible in the viewport
@@ -59,7 +59,7 @@ function getSpeedIndexContribution(node, debugMode=false) {
     var heightOfRectangle = rightBottomY - leftTopY;
 
     if (debugMode) {
-        console.log("alohomora_output: length is " + lengthOfRectangle + " and width is " + heightOfRectangle)
+        console.log("alohomora_debug: length is " + lengthOfRectangle + " and width is " + heightOfRectangle)
     }
     // here, we should divide by the total occupied viewport size
     // we will know this once we finish populating the speedIndex array
