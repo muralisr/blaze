@@ -489,14 +489,18 @@ class Simulator:
         self.log.info("speed index time is ", speed_index_time=self.speed_index_time)
         self.log.info("total viewport drawn is ", total_viewport_drawn=total_viewport_drawn)
         while index_at_speed_index < len(self.speed_index_time): # go until end of plt
+            self.log.info("condition A")
             interval_score = 0
             while index_at_speed_index < len(self.speed_index_time) and current_time >= self.speed_index_time[index_at_speed_index]:
+                self.log.info("condition B")
                 interval_score += increment_interval * (1.0 - (total_viewport_drawn[index_at_speed_index] / 100.0))
                 self.log.info("adding to interval score in A ", interval_score=interval_score)
                 index_at_speed_index += 1
             else:
+                self.log.info("condition C")
                 interval_score = increment_interval * (1.0 - (0 / 100.0))
                 self.log.info("adding to interval score in B ", interval_score=interval_score)
+            self.log.info("condition D")
             current_time += increment_interval
             list_of_interval_scores.append(interval_score)
 
