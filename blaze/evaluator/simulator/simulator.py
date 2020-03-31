@@ -485,7 +485,7 @@ class Simulator:
         self.log.info("total_viewport drawn after normalizing is ", total_viewport_drawn=total_viewport_drawn)
         
         # 1 or 2 based on if u want reimann or wpt
-        choice = 2
+        choice = 1
 
         if choice == 1:
             # we apply reimann trapezoidal sum
