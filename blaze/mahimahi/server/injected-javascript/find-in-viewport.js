@@ -25,14 +25,18 @@ function isElementInViewport (el) {
 	return vertInView && horzInView;
 }
 
-function getSpeedIndexContribution(node) {
+function getSpeedIndexContribution(node, debugMode=false) {
     
     if(!isElementInViewport(node)) {
-        console.log("element not in viewport")
+        console.log("alohomora_output: element not in viewport")
         return 0;
     }
-    // given a node, we need to find out the area visible in the viewport
+    if (debugMode) {
+        console.log("alohomora_output: element is in viewport.")
+    }
 
+    // given a node, we need to find out the area visible in the viewport
+    
     
     var rect = node.getBoundingClientRect();
 
@@ -54,6 +58,9 @@ function getSpeedIndexContribution(node) {
     var lengthOfRectangle = rightBottomX - leftTopX;
     var heightOfRectangle = rightBottomY - leftTopY;
 
+    if (debugMode) {
+        console.log("alohomora_output: length is " + lengthOfRectangle + " and width is " + heightOfRectangle)
+    }
     // here, we should divide by the total occupied viewport size
     // we will know this once we finish populating the speedIndex array
     // i.e. once we know area of each element in viewport. so it is done later
@@ -144,7 +151,8 @@ function findAndPrintImagesInViewport(ele) {
                     }
                     if (url != null) {
                         imagesInViewPort.push(url)
-                        console.log("alohomora_debug: " + url + " speed index is " + getSpeedIndexContribution(node))
+                        if (url == "https://www.walgreens.com/images/adaptive/sp/97959_ClearanceMegaMenu_LastChance_310x554.jpg")
+                            console.log("alohomora_debug: " + url + " speed index is " + getSpeedIndexContribution(node, true))
                         speedIndex[url] = getSpeedIndexContribution(node);
                     }
             } else {
