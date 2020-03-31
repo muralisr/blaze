@@ -483,7 +483,7 @@ class Simulator:
         # https://sites.google.com/a/webpagetest.org/docs/using-webpagetest/metrics/speed-index#TOC-Measuring-Visual-Progress
         
         list_of_interval_scores = []
-        current_time = 0 # start at 0 ms
+        current_time = 100 # start at 100 ms
         increment_interval = 100 # increment by 100 ms
         index_at_speed_index = 0
         self.log.info("speed index time is ", speed_index_time=self.speed_index_time)
