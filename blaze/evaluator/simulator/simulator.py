@@ -489,7 +489,7 @@ class Simulator:
         
         list_of_interval_scores = []
         current_time = 100 # start at 100 ms
-        increment_interval = 100 # increment by 100 ms
+        increment_interval = 1 # increment by 1 ms temporarily
         index_at_speed_index = 0
         self.log.info("speed index time is ", speed_index_time=self.speed_index_time)
         self.log.info("total viewport drawn is ", total_viewport_drawn=total_viewport_drawn)
