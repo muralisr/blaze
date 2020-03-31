@@ -33,7 +33,8 @@ function getSpeedIndexContribution(node, debugMode=false) {
     }
     if (debugMode) {
         console.log("alohomora_debug: element is in viewport.")
-        console.log("alohomora_debug: display is " + JSON.stringify(node.style))
+        console.log("alohomora_debug: style is " + JSON.stringify(node.style))
+        console.log("alohomora_debug: window computed style is " + JSON.stringify(window.getComputedStyle(node)))
     }
 
     // given a node, we need to find out the area visible in the viewport
