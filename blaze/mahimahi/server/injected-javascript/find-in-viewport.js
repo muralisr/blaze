@@ -28,6 +28,7 @@ function isElementInViewport (el) {
 function getSpeedIndexContribution(node) {
     
     if(!isElementInViewport(node)) {
+        console.log("element not in viewport")
         return 0;
     }
     // given a node, we need to find out the area visible in the viewport
@@ -143,6 +144,7 @@ function findAndPrintImagesInViewport(ele) {
                     }
                     if (url != null) {
                         imagesInViewPort.push(url)
+                        console.log("alohomora_debug: " + url + " speed index is " + getSpeedIndexContribution(node))
                         speedIndex[url] = getSpeedIndexContribution(node);
                     }
             } else {
