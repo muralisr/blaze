@@ -149,7 +149,8 @@ def annotate_critical_requests_har_resources(website, config, client_env, har_re
                 log.debug("setting resource to critical and with viewport setting ", viewport_occupied=viewport_occupied[res.url])
                 har_resources[i] = res._replace(critical=True, viewport_occupied=viewport_occupied[res.url])
 
-    har_resources[0] = har_resources[0]._replace(critical=True, viewport_occupied=1)
+    # use this if html should be considered as well
+    # har_resources[0] = har_resources[0]._replace(critical=True, viewport_occupied=1)
     return har_resources
 
 

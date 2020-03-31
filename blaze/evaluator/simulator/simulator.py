@@ -159,7 +159,8 @@ class Simulator:
 
         for node in completed_this_step:
             self.completed_nodes[node] = self.total_time_ms + node.resource.execution_ms
-            if node.resource.url == 'https://www.homedepot.com/' or node.resource.url == 'https://www.nytimes.com/' or node.resource.url == 'https://www.walgreens.com/':
+            # use the following if html should be counted
+            if False and node.resource.url == 'https://www.homedepot.com/' or node.resource.url == 'https://www.nytimes.com/' or node.resource.url == 'https://www.walgreens.com/':
                 self.log.debug("appending main page to speed_index_time ", viewport=node.resource.viewport_occupied, speed_index_time=self.speed_index_time, appended_time=self.total_time_ms)
                 self.log.debug("landing page time is x and appending with viewport", time=self.total_time_ms,viewport=node.resource.viewport_occupied)
                 self.speed_index_time.append(self.total_time_ms)
