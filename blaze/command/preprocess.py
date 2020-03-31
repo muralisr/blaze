@@ -125,16 +125,20 @@ def annotate_critical_requests_har_resources(website, config, client_env, har_re
     critical_requests = set(h.request.url for h in har.log.entries if h.critical)
     log.debug("critical requests before annotating", resources=critical_requests)
     viewport_occupied = {}
+    list_of_viewports = []
     for har_entry in har.log.entries:
         if har_entry.critical:
             log.debug("har_entry is critical. ", har_entry=har_entry)
             viewport_occupied[har_entry.request.url] = har_entry.viewport_occupied
+            list_of_viewports.append(har_entry.viewport_occupied)
 
+    
     for i, res in enumerate(har_resources):
         if res.url in critical_requests:
                 log.debug("setting resource to critical and with viewport setting ", viewport_occupied=viewport_occupied[res.url])
                 har_resources[i] = res._replace(critical=True, viewport_occupied=viewport_occupied[res.url])
 
+    har_resources[0] = har_resources[0]._replace(critical=True, viewport_occupied=1-sum(list_of_viewports))
     return har_resources
 
 
