@@ -168,7 +168,7 @@ class Simulator:
             # if node.resource.url == 'https://www.walgreens.com/common/react/assets/images/walgreens_logo.png?o=acs':
             #     self.log.debug("XXXXXXXXXX ", resource=node.resource)
             #self.log.debug("resource completed with viewport occupied as ", resource=node.resource.url, viewport_occupied=node.resource.viewport_occupied)
-            # self.log.verbose("resource completed", resource=node.resource.url, time=self.completed_nodes[node])
+            self.log.verbose("resource completed", resource=node.resource.url, time=self.completed_nodes[node])
 
     def schedule_child_requests(self, parent: Node, dry_run=False) -> Optional[List[Tuple[Node, float]]]:
         """
