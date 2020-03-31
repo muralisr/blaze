@@ -88,15 +88,16 @@ function getCriticalRequests() {
 function normalizeSpeedIndices(speedIndexLocal) {
     // speedIndexLocal is a dict of url -> viewport area 
     // for each element, we divide by the total occupied viewport area
-    var totalArea = 0;
-    for (var key in speedIndexLocal) {
-        if (speedIndexLocal.hasOwnProperty(key)) {
-            totalArea = totalArea + speedIndexLocal[key];
-        }
-    }
-    if (totalArea == 0) {
-        totalArea = 1;
-    }
+    // var totalArea = 0;
+    // for (var key in speedIndexLocal) {
+    //     if (speedIndexLocal.hasOwnProperty(key)) {
+    //         totalArea = totalArea + speedIndexLocal[key];
+    //     }
+    // }
+    // if (totalArea == 0) {
+    //     totalArea = 1;
+    // }
+    var totalArea = getViewportSize();
     for (var key in speedIndexLocal) {
         if (speedIndexLocal.hasOwnProperty(key)) {
             var currentValue = speedIndexLocal[key];
