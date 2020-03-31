@@ -492,8 +492,8 @@ class Simulator:
             self.log.info("condition A")
             interval_score = 0
             while index_at_speed_index < len(self.speed_index_time) and current_time >= self.speed_index_time[index_at_speed_index]:
-                self.log.info("condition B")
-                interval_score += increment_interval * (1.0 - (total_viewport_drawn[index_at_speed_index] / 100.0))
+                self.log.info("condition B ", total_viewport_drawn=total_viewport_drawn[index_at_speed_index])
+                interval_score += (increment_interval * (1.0 - (total_viewport_drawn[index_at_speed_index] / 100.0)))
                 self.log.info("adding to interval score in A ", interval_score=interval_score)
                 index_at_speed_index += 1
             else:
