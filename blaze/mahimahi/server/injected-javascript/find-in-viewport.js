@@ -46,6 +46,12 @@ function getSpeedIndexContribution(node, debugMode=false) {
     // if image y is > 0, then left top y is image.y
     var leftTopY = rect.y > 0 ? rect.y : 0;
     
+    if (debugMode) {
+        console.log("alohomora_debug: rect.right " + rect.right + " and rect.bottom is " + rect.bottom)
+        console.log("alohomora_debug: rect.x " + rect.x + " and rect.y is " + rect.y)
+        console.log("alohomora_debug: node.getBoundingClientRect() " + node.getBoundingClientRect() + " and node is " + JSON.stringify(node))
+    }
+
     // if image x is < viewport.width, then right bottom x is image.x
     var windowRight = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth;
     var rightBottomX = rect.right < windowRight ? rect.right : windowRight;
