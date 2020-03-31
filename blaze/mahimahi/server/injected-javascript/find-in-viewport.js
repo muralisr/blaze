@@ -49,7 +49,8 @@ function getSpeedIndexContribution(node, debugMode=false) {
     if (debugMode) {
         console.log("alohomora_debug: rect.right " + rect.right + " and rect.bottom is " + rect.bottom)
         console.log("alohomora_debug: rect.x " + rect.x + " and rect.y is " + rect.y)
-        console.log("alohomora_debug: node.getBoundingClientRect() " + node.getBoundingClientRect() + " and node is " + JSON.stringify(node))
+        console.log("alohomora_debug: rect.width " + rect.width + " and rect.height is " + rect.height)
+        console.log("alohomora_debug: rect.top " + rect.top + " and rect.left is " + rect.left)
     }
 
     // if image x is < viewport.width, then right bottom x is image.x
