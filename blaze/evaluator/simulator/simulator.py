@@ -482,23 +482,58 @@ class Simulator:
                 total_viewport_drawn[i] = ele / normalizer
 
         self.log.info("total_viewport drawn after normalizing is ", total_viewport_drawn=total_viewport_drawn)
-        # we apply reimann trapezoidal sum
-        # but note that our trapezoid has parallel heights
-        # so our formula is time_delta * (y_0+y_1)/2
-        total_area_under_curve = 0
-        for index in range(len(total_viewport_drawn) - 1) :
-            y_0 = total_viewport_drawn[index]
-            y_1 = total_viewport_drawn[index + 1]
-            x_0 = self.speed_index_time[index]
-            x_1 = self.speed_index_time[index + 1]
-            total_area_under_curve += 0.5 * (x_1 - x_0) * (y_0 + y_1)
-        self.log.warn("computed area under the curve ", total_area_under_curve=total_area_under_curve)
-        self.log.warn("speed_index_time is ", speed_index_time=self.speed_index_time)
-        self.log.warn("total_viewport_drawn is ", total_viewport_drawn=total_viewport_drawn)
-        # we have area under the curve
-        # but we actually need the area above the curve.
-        # so let us compute the area of the graph and subtract
-        # the area under the curve from it. 
+        
+        # 1 or 2 based on if u want reimann or wpt
+        choice = 2
 
-        total_area_above_curve = (max(self.speed_index_time) * max (total_viewport_drawn)) - total_area_under_curve
-        return total_area_above_curve
+        if choice == 1:
+            # we apply reimann trapezoidal sum
+            # but note that our trapezoid has parallel heights
+            # so our formula is time_delta * (y_0+y_1)/2
+            total_area_under_curve = 0
+            for index in range(len(total_viewport_drawn) - 1) :
+                y_0 = total_viewport_drawn[index]
+                y_1 = total_viewport_drawn[index + 1]
+                x_0 = self.speed_index_time[index]
+                x_1 = self.speed_index_time[index + 1]
+                total_area_under_curve += 0.5 * (x_1 - x_0) * (y_0 + y_1)
+            self.log.warn("computed area under the curve ", total_area_under_curve=total_area_under_curve)
+            self.log.warn("speed_index_time is ", speed_index_time=self.speed_index_time)
+            self.log.warn("total_viewport_drawn is ", total_viewport_drawn=total_viewport_drawn)
+            # we have area under the curve
+            # but we actually need the area above the curve.
+            # so let us compute the area of the graph and subtract
+            # the area under the curve from it. 
+
+            total_area_above_curve = (max(self.speed_index_time) * max (total_viewport_drawn)) - total_area_under_curve
+            return total_area_above_curve
+        else:
+            # The Speed Index is the "area above the curve" calculated in ms and using 0.0-1.0 for the range of visually complete.  The calculation looks at each 0.1s interval and calculates IntervalScore = Interval * (1.0 - (Completeness/100)) where Completeness is the % Visually complete for that frame and Interval is the elapsed time for that video frame in ms (100 in this case).  The overall score is just a sum of the individual intervals: SUM(IntervalScore)
+            # https://sites.google.com/a/webpagetest.org/docs/using-webpagetest/metrics/speed-index#TOC-Measuring-Visual-Progress
+            
+            list_of_interval_scores = []
+            current_time = 100 # start at 100 ms
+            increment_interval = 1 # increment by 1 ms temporarily
+            index_at_speed_index = 0
+            self.log.info("speed index time is ", speed_index_time=self.speed_index_time)
+            self.log.info("total viewport drawn is ", total_viewport_drawn=total_viewport_drawn)
+            while index_at_speed_index < len(self.speed_index_time): # go until end of plt
+                self.log.info("condition A")
+                interval_score = 0
+                if index_at_speed_index < len(self.speed_index_time) and current_time >= self.speed_index_time[index_at_speed_index]:
+                    while index_at_speed_index < len(self.speed_index_time) and current_time >= self.speed_index_time[index_at_speed_index]:
+                        self.log.info("condition B ", total_viewport_drawn=total_viewport_drawn[index_at_speed_index])
+                        interval_score += (increment_interval * (1.0 - (total_viewport_drawn[index_at_speed_index] / 100.0)))
+                        self.log.info("adding to interval score in A ", interval_score=interval_score)
+                        index_at_speed_index += 1
+                else:
+                    self.log.info("condition C")
+                    interval_score = increment_interval * (1.0 - (0 / 100.0))
+                    self.log.info("adding to interval score in B ", interval_score=interval_score)
+                self.log.info("condition D")
+                current_time += increment_interval
+                list_of_interval_scores.append(interval_score)
+
+            total_area_above_curve = sum(list_of_interval_scores)
+            self.log.warn("computed area above the curve ", total_area_above_curve=total_area_above_curve)
+            return total_area_above_curve
