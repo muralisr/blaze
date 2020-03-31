@@ -90,8 +90,8 @@ function getCriticalRequests() {
     importantRequests = imagesInViewPort.map(function(url) {return url;});
     console.log("alohomora_debug: inside getCriticalRequests")
     
-    // temporarily remove js and css and only care about images
-    return importantRequests;
+    // // temporarily remove js and css and only care about images
+    // return importantRequests;
 
     if (typeof(urlRequestors) == 'undefined' || urlRequestors == null) return importantRequests;
     console.log("alohomora_debug: urlrequestors is NOT null")
@@ -134,7 +134,7 @@ function getSpeedIndicesOfElementsInViewport() {
 
     // temporarily return normalizeSpeedIndices(speedIndex) as it is 
     // by doing this, we ignore the javascript elements
-    return normalizeSpeedIndices(speedIndex);
+    // return normalizeSpeedIndices(speedIndex);
 
     // speedIndex is a global variable.
     // if we have not intercepted any javascript, just return compute speedindex for images
