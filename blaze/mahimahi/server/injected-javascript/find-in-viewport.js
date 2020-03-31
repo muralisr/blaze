@@ -54,6 +54,11 @@ function getSpeedIndexContribution(node, debugMode=false) {
     var windowHeight = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight;
     var rightBottomY = rect.bottom < windowHeight ? rect.bottom : windowHeight;
 
+    if (debugMode) {
+        console.log("alohomora_debug: windowHeight " + windowHeight + " and windowRight is " + windowRight)
+        console.log("alohomora_debug: rightBottomX " + rightBottomX + " and leftTopX is " + leftTopX)
+        console.log("alohomora_debug: rightBottomY " + rightBottomY + " and leftTopY is " + leftTopY)
+    }
 
     var lengthOfRectangle = rightBottomX - leftTopX;
     var heightOfRectangle = rightBottomY - leftTopY;
