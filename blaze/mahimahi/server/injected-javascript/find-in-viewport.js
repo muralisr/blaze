@@ -111,7 +111,9 @@ function normalizeSpeedIndices(speedIndexLocal) {
 function getSpeedIndicesOfElementsInViewport() {
 
     // temporarily return normalizeSpeedIndices(speedIndex) as it is 
+    // by doing this, we ignore the javascript elements
     return normalizeSpeedIndices(speedIndex);
+
     // speedIndex is a global variable.
     // if we have not intercepted any javascript, just return compute speedindex for images
     if (typeof(urlRequestors) == 'undefined' || urlRequestors == null) return normalizeSpeedIndices(speedIndex);
