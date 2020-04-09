@@ -46,7 +46,7 @@ class Environment(gym.Env):
         self.action_space: Optional[ActionSpace] = None
         self.policy: Optional[Policy] = None
         self.initialize_environment(
-            self.config.client_env or client.get_random_fast_lte_client_environment(), self.config.cached_urls
+            self.config.client_env or client.get_random_environment_from_specific_set(), self.config.cached_urls
         )
 
     def seed(self, seed=None):
