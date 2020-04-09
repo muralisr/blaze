@@ -58,7 +58,6 @@ class HarCapturer {
       await client.Page.enable();
       await client.Network.enable();
       await client.Tracing.start();
-      
       if(this.options.extractCriticalRequests) {
         await client.Runtime.enable();
         client.Runtime.consoleAPICalled((loggedObject) => {
@@ -68,9 +67,13 @@ class HarCapturer {
               const element = loggedObject.args[index];
               let logOutput = element["value"];
               try {
+		      process.stdout.write("\n")
+		process.stdout.write(logOutput)
                 if (typeof(logOutput) == "string" && logOutput.indexOf("alohomora_output") >= 0) {
                     logOutput = JSON.parse(logOutput);
-                    logOutput["alohomora_output"].forEach(e => this.critical_request_urls.push(e));   
+                    logOutput["alohomora_output"].forEach(e => this.critical_request_urls.push(e));
+		    process.stdout.write(this.critical_request_urls);
+		    process.stdout.write("HELLOWORLDDDD");
               }} catch (error) {
                 console.error(`critical req not found. `, error);
               }
@@ -83,6 +86,8 @@ class HarCapturer {
       await client.Page.navigate({ url: this.url });
       this.navStart = Date.now();
       await client.Page.loadEventFired();
+//	    await asyncWait(10000);
+	    //	    await client.Runtime.evaluate({expression: 'console.log("from inspector");console.log(document.URL);getAllUrlsFromInlineStyles();console.log("after inspector")'});
       await client.Tracing.end();
       return new Promise((resolve, reject) => {
         client.Tracing.tracingComplete(() => {
