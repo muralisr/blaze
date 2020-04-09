@@ -80,7 +80,7 @@ function findAndPrintImagesInViewport(ele) {
     
                         var link = document.createElement("a");
                         link.href = potentialURL;
-                        if(potentialURL.index("data:image") < 0)
+                        if(potentialURL.indexOf("data:image") < 0)
                             imagesInViewPort.push(link.href)
                     }
                 }
@@ -95,9 +95,65 @@ function findAndPrintImagesInViewport(ele) {
     console.log(JSON.stringify({'alohomora_output': answer}))
 }
 
+function getAllUrlsFromInlineStyles() {
+    var css = [];
+    for (var i=0; i<document.styleSheets.length; i++)
+    {
+        var sheet = document.styleSheets[i];
+        var rules = ('cssRules' in sheet)? sheet.cssRules : sheet.rules;
+        if (rules)
+        {
+            css.push('\n/* Stylesheet : '+(sheet.href||'[inline styles]')+' */');
+            for (var j=0; j<rules.length; j++)
+            {
+                var rule = rules[j];
+                if ('cssText' in rule)
+                    css.push(rule.cssText);
+                else
+                    css.push(rule.selectorText+' {\n'+rule.style.cssText+'\n}\n');
+            }
+        }
+    }
+    var cssInline = css.join('\n')+'\n';
+    var regExpr = new RegExp(/url\(.*?\)/, 'gi')
+    var listOfUrlsInCSS = cssInline.match(regExpr)
+    listOfUrlsInCSS.forEach(function(value) {
+        if (value.indexOf("url") >= 0) {
+            var potentialURL = value;
+            var startIndex = potentialURL.indexOf('url(')
+            var urlWithSpace = false;
+            if (startIndex < 0) {
+                startIndex = potentialURL.indexOf('url (')
+                urlWithSpace = true;
+            } 
+            if (startIndex < 0) {
+                return;
+            }
+            var endIndex = potentialURL.indexOf(')', startIndex)
+            if (endIndex < 0) {
+                return
+            }
+            var potentialURL = potentialURL.substring(startIndex + (urlWithSpace ? 5 : 4), endIndex)
+            var t=potentialURL.length;
+            if (potentialURL.charAt(0)=='"'||potentialURL.charAt(0)=="'") {
+                potentialURL = potentialURL.substring(1);
+                t--;
+            }
+            if (potentialURL.charAt(t-1)=='"'||potentialURL.charAt(t-1)=="'") {
+                potentialURL = potentialURL.substring(0,t-1);
+            }
+
+            var link = document.createElement("a");
+            link.href = potentialURL;
+            if(potentialURL.indexOf("data:image") < 0)
+                imagesInViewPort.push(link.href)
+        }
+    })
+}
 
 window.addEventListener('load', function (event) {
     try {
+        getAllUrlsFromInlineStyles()
         findAndPrintImagesInViewport(document)
         var listOfIframes = document.querySelectorAll("iframe");
         for (var index = 0; listOfIframes && index < listOfIframes.length; index++) {
