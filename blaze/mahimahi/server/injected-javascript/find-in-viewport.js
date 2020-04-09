@@ -21,7 +21,7 @@ function isElementInViewport (el) {
 
 
 function getCriticalRequests() {
-    console.log("inside getCriticalRequests")
+    // console.log("inside getCriticalRequests")
     var importantRequests = []
     importantRequests = imagesInViewPort.map(function(url) {return url;});
     if (typeof(urlRequestors) == 'undefined' || urlRequestors == null) return importantRequests;
@@ -35,7 +35,7 @@ function getCriticalRequests() {
 
 
 function findAndPrintImagesInViewport(ele) {
-	console.log("in findandprintimagesinviewport");
+	// console.log("in findandprintimagesinviewport");
     ele.querySelectorAll('*').forEach(function(node) {
         try {
             if (isElementInViewport(node)) {
@@ -99,63 +99,63 @@ function findAndPrintImagesInViewport(ele) {
 }
 
 function getAllUrlsFromInlineStyles() {
-	console.log("getting urls from inline styles in " + document.URL);
+	// console.log("getting urls from inline styles in " + document.URL);
     var css = [];
-	console.log("1 " + document.URL);
+	// console.log("1 " + document.URL);
     for (var i=0; i<document.styleSheets.length; i++)
     {
-	    console.log("2 " + document.URL);
+	    // console.log("2 " + document.URL);
 	try {
         var sheet = document.styleSheets[i];
 	    
-	    if (!('cssRules' in sheet || 'rules' in sheet)){ console.log("continueing " + document.URL);continue;}
+	    if (!('cssRules' in sheet || 'rules' in sheet)){ console.log("skipping sheet " + document.URL);continue;}
         var rules = ('cssRules' in sheet)? sheet.cssRules : sheet.rules;
-	    console.log("3 " + document.URL);
+	    // console.log("3 " + document.URL);
 
         if (rules)
         {
-		console.log("4 " + document.URL);
+		// console.log("4 " + document.URL);
 
             css.push('\n/* Stylesheet : '+(sheet.href||'[inline styles]')+' */');
-		console.log("5 " + document.URL);
+		// console.log("5 " + document.URL);
 
             for (var j=0; j<rules.length; j++)
             {
-		    console.log("6 " + document.URL);
+		    // console.log("6 " + document.URL);
 
                 var rule = rules[j];
                 if ('cssText' in rule) {
                     css.push(rule.cssText);
-			console.log("7 " + document.URL);
+			// console.log("7 " + document.URL);
 		}
                 else {
                     css.push(rule.selectorText+' {\n'+rule.style.cssText+'\n}\n');
-			console.log("8 " + document.URL);
+			// console.log("8 " + document.URL);
 		}
-		    console.log("9 " + document.URL);
+		    // console.log("9 " + document.URL);
             }
-		console.log("10 " + document.URL);
+		// console.log("10 " + document.URL);
         }
     }
 	catch(error) {
 		console.log("skipping sheet due to error ", error)
 	}
 }
-	console.log("11 " + document.URL);
+	// console.log("11 " + document.URL);
 
-	console.log("going to do regex in " + document.URL);
+	// console.log("going to do regex in " + document.URL);
     var cssInline = css.join('\n')+'\n';
-	console.log("cssinline is below in " + document.URL)
-	console.log(cssInline)
-	console.log("cssinline is above in " + document.URL)
+	// console.log("cssinline is below in " + document.URL)
+	// console.log(cssInline)
+	// console.log("cssinline is above in " + document.URL)
     var regExpr = new RegExp(/url\(.*?\)/, 'gi')
     var listOfUrlsInCSS = cssInline.match(regExpr)
-	console.log("listofcss is below\n")
-	console.log(listOfUrlsInCSS)
-	console.log("\nlistofcss is above")
+	// console.log("listofcss is below\n")
+	// console.log(listOfUrlsInCSS)
+	// console.log("\nlistofcss is above")
     listOfUrlsInCSS.forEach(function(value) {
         if (value.indexOf("url") >= 0) {
-		console.log("found a potential url")
+		// console.log("found a potential url")
             var potentialURL = value;
             var startIndex = potentialURL.indexOf('url(')
             var urlWithSpace = false;
@@ -190,7 +190,7 @@ function getAllUrlsFromInlineStyles() {
 
 window.addEventListener('load', function (event) {
     try {
-	console.log("on page load fired");
+	// console.log("on page load fired");
         getAllUrlsFromInlineStyles()
         findAndPrintImagesInViewport(document)
         var listOfIframes = document.querySelectorAll("iframe");
