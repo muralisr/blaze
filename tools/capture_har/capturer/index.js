@@ -231,6 +231,9 @@ class HarCapturer {
           if (this.critical_request_urls.includes(r.request.url)) {
             r.critical = true;
           }
+          if (r.request.url.indexOf('.css') >= 0) { // css urls are always critical
+            r.critical = true;
+          }
           return r;
         }
       })
