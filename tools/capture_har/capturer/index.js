@@ -67,13 +67,13 @@ class HarCapturer {
               const element = loggedObject.args[index];
               let logOutput = element["value"];
               try {
-		      process.stdout.write("\n")
-		process.stdout.write(logOutput)
+		      // process.stdout.write("\n")
+		// process.stdout.write(logOutput)
                 if (typeof(logOutput) == "string" && logOutput.indexOf("alohomora_output") >= 0) {
                     logOutput = JSON.parse(logOutput);
                     logOutput["alohomora_output"].forEach(e => this.critical_request_urls.push(e));
-		    process.stdout.write(this.critical_request_urls);
-		    process.stdout.write("HELLOWORLDDDD");
+		    // process.stdout.write(this.critical_request_urls);
+		    // process.stdout.write("HELLOWORLDDDD");
               }} catch (error) {
                 console.error(`critical req not found. `, error);
               }
