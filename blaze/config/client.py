@@ -87,6 +87,37 @@ def get_random_client_environment():
         cpu_slowdown=cpu_slowdown,
     )
 
+def get_random_environment_from_specific_set():
+    """ Returns a random environment from amongst the 3 that we have in figure 6"""
+    environment_chosen = random.choice([1,2,3])
+    if environment_chosen == 1:
+        network_type = NetworkType.LTE
+        device_speed = DeviceSpeed.FAST_MOBILE
+        bandwidth_for_environment = 12000
+        latency_for_environment = 100
+    elif environment_chosen == 2:
+        network_type = NetworkType.WIFI
+        device_speed = DeviceSpeed.DESKTOP
+        bandwidth_for_environment = 24000
+        latency_for_environment = 20
+    elif environment_chosen == 3:
+        network_type = NetworkType.LTE
+        device_speed = DeviceSpeed.SLOW_MOBILE
+        bandwidth_for_environment = 18000
+        latency_for_environment = 60
+    network_speed = NetworkSpeed.FAST
+    # device_speed = random.choice([DeviceSpeed.FAST_MOBILE, DeviceSpeed.SLOW_MOBILE, DeviceSpeed.DESKTOP])
+    # bandwidth_range = network_to_bandwidth_range(network_type, network_speed)
+    # latency_range = network_to_latency_range(network_type)
+    cpu_slowdown = device_speed_to_cpu_slowdown(device_speed)
+    return ClientEnvironment(
+        network_type=network_type,
+        network_speed=network_speed,
+        device_speed=device_speed,
+        bandwidth=bandwidth_for_environment,
+        latency=latency_for_environment,
+        cpu_slowdown=cpu_slowdown,
+    )
 
 def get_random_fast_lte_client_environment():
     """ Returns a random fast mobile LTE ClientEnvironment"""
