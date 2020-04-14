@@ -200,5 +200,5 @@ def get_alohamora_push_policy(args):
     saved_model = model.get_model(args.location)
     instance = saved_model.instantiate(config)
     policy = instance.policy
-    with open(args.output_file) as f:
+    with open(args.output_file, "w") as f:
         f.write(json.dumps(policy.as_dict, indent=4))
