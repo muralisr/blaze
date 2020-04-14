@@ -138,3 +138,65 @@ def evaluate(args):
         data["replay_server"] = {"without_policy": plts, "with_policy": push_plts}
 
     print(json.dumps(data, indent=4))
+
+@command.argument("--location", help="The path to the saved model", required=True)
+@command.argument(
+    "--model",
+    help="The RL technique used during training for the saved model",
+    required=True,
+    choices=["A3C", "APEX", "PPO"],
+)
+@command.argument("--manifest", "-m", help="The location of the page manifest to query the model for", required=True)
+@command.argument("--bandwidth", "-b", help="The bandwidth to query the model for (kbps)", type=int, required=True)
+@command.argument("--latency", "-l", help="The latency to query the model for (ms)", type=int, required=True)
+@command.argument(
+    "--cpu_slowdown",
+    "-s",
+    help="The cpu slowdown of the device to query the model for",
+    type=int,
+    choices=[1, 2, 4],
+    default=1,
+)
+@command.argument(
+    "--reward_func", help="Reward function to use", default=1, choices=list(range(get_num_rewards())), type=int
+)
+@command.argument("--use_aft", help="Use Speed Index metric", action="store_true")
+@command.argument(
+    "--cache_time", help="Simulate cached object expired after this time (in seconds)", type=int, default=None
+)
+@command.command
+def get_alohamora_push_policy(args):
+    """
+    Instantiate the given model and checkpoint and query it for the policy corresponding to the given
+    client and network conditions. Prints the policy to the screen
+    """
+    client_env = get_client_environment_from_parameters(args.bandwidth, args.latency, args.cpu_slowdown)
+    manifest = EnvironmentConfig.load_file(args.manifest)
+
+    cached_urls = set(
+        res.url
+        for group in manifest.push_groups
+        for res in group.resources
+        if args.cache_time is not None and res.cache_time > args.cache_time
+    )
+
+    config = get_config(manifest, client_env, args.reward_func).with_mutations(
+        cached_urls=cached_urls, use_aft=args.use_aft
+    )
+
+    if args.model == "A3C":
+        from blaze.model import a3c as model
+    if args.model == "APEX":
+        from blaze.model import apex as model
+    if args.model == "PPO":
+        from blaze.model import ppo as model
+
+    import ray
+
+    ray.init(num_cpus=2, log_to_driver=False)
+
+    saved_model = model.get_model(args.location)
+    instance = saved_model.instantiate(config)
+    policy = instance.policy
+
+    print(json.dumps(policy.as_dict, indent=4))
